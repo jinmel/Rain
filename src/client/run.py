@@ -2,7 +2,8 @@
 
 import xml.etree.ElementTree as ET
 from RainLib.ports import *
-import daemon
+from watchdog.observers import Observer
+
 
 
 META_FILENAME = 'metafile.xml'
@@ -55,5 +56,7 @@ if __name__ == "__main__":
         print 'Metafile updated'
     elif choice == '2':
         pass
+
+
 
 
