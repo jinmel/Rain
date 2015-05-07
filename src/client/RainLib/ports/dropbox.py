@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import webbrowser
 import BaseHTTPServer
 from dropbox.client import DropboxOAuth2Flow, DropboxClient
