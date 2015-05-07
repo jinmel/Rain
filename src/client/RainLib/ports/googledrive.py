@@ -17,6 +17,7 @@ class GoogleDrive(clouddrive.CloudDrive):
             f = open("oauth.txt", "w")
             f.write(self.access_token)
             f.close()
+            gauth = GoogleAuth()
             gauth.LoadCredentialsFile("oauth.txt")
             os.remove("oauth.txt")
             self.drive = _GoogleDrive(gauth)
@@ -40,32 +41,93 @@ class GoogleDrive(clouddrive.CloudDrive):
             
 #        self.drive = GoogleDrive(gauth)
     def read(self, filename):
-        pass
+        fid = self.find_file_id(filename) 
+        if fid is None:
+            return -1
+        else:
+            file_new = drive.CreateFile({'id' : fid})
+            file_new.GetContentFile(filename)
+            return 1
+
 
     def write(self, filename):
-        pass
+        dirname_s = dirname.split("/")
+        if len(dirname_s) > 2:
+            fid = self.find_file_id(dirname_s[len(dirname_s)-2])
+            if fid is None :
+                return -1
+        else:
+            fid = 'root'
+        
+        file_new = drive.CreateFile({'title':filename,'parents':[{'kind':"dirve#fileLink",'id':fid}]})
+        try:
+            file_new.SetContentFile(filename)
+
+            file_new.Upload()
+        except:
+            return -1
+
+        return 1
 
     def mkdir(self, dirname):
-        for i in len(dirname.split("/"))-1 :
-            pass
+        dirname_s = dirname.split("/")
+        if len(dirname_s) > 3 :
+            fid = self.find_file_id(dirname_s[len(dirname_s)-3])
+            if fid is None :
+                return -1
+        else:
+            fid = 'root'
             
+#        dir_list = self.make_parents_list(dirname_s)
+#        p1, p2 = dir_list[len(dir_list)-1]
+          
         if os.path.isdir(dirname):
-            file_new = drive.CreateFile({'title' : dirname, 'mimeType' : "application/vnd.google-apps.folder",'parents':[{'kind':parents['kind'], 'id':parents['id']}]})
+            file_new = drive.CreateFile({'title' : dirname, 'mimeType' : "application/vnd.google-apps.folder",'parents':[{'kind':"drive#fileLink", 'id':fid}]})
         else :
             return -1
-        file_new.Upload()
+        try :
+            file_new.Upload()
+        except:
+            return -1
         return 1
 
     def delete(self, filename):
-        pass
+        fid = self.find_file_id(filename)
+        if fid is None :
+            return -1
+        else:
+            file_new = drive.CreateFile({'id' : fid})
+            file_new._FilesDelete()
+            return 1
 
+    """
+    def make_parents_list(self, dirname_s):
+        parents_list = []
+        if len(dirname_s) > 3 :
+            for i in xrange(len(dirname_s)-1) :
+                if i != 0 :
+                    if find_file_id(dirname_s[i]) is None :
+                        return -1
+                    else
+                        if i != 1 :
+                            p1, p2 = parents_list[i-2]
+                        else
+                            p2 = {'id':'root','kind':'drive#fileLink'}
+                        parents_list += [(drive.CreateFile({'id' :find_file_id(dirname_s[i]),'kind':"drive#fileLink",'parents':[p2]}), {'id' :find_file_id(dirname_s[i]),'kind':"dirve#fileLink"})]
+        
+        return parents_list
+    """
 
     def find_file_id(self, filename):
-        pass
+        fid = ListFolder('root',filename)
+        return fid
     
-    def ListFolder(parent):
+    def ListFolder(parent, filename):
         file_list = self.drive.ListFile({'q':"'%s' in parents and trashed=false" % parent}).GetList()
         for f in file_list:
+            if f['title']=="filename":
+                return f['id']
+                
             if f['mimeType']=='application/vnd.google-apps.folder':
                 ListFolder(f['id'])
-
+        return None
