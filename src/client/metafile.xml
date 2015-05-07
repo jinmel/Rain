@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<Rain>
+
+    <cloud>
+        <name>Google Drive</name>
+        <access_token>129831293198</access_token>
+        <expiry_date>2015-09-30</expiry_date>
+
+        <file>
+            <local_filename>data.txt</local_filename>
+            <remote_filename>Rain/data.txt</remote_filename>
+        </file>
+
+        <file>
+            <local_filename>data2.txt</local_filename>
+            <remote_filename>Rain/data2.txt</remote_filename>
+        </file>
+    </cloud>
+</Rain>
