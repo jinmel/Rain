@@ -13,8 +13,10 @@ class DropBox(clouddrive.CloudDrive):
     def __init__(self, access_token=None):
         if access_token is not None :
                 self.client=DropboxClient(access_token)
-        self.access_token = access_token
-        super.__init__(self,access_token)
+                self.access_token = access_token
+                clouddrive.CloudDrive.__init__(self,access_token)
+        else  :
+            clouddrive.CloudDrive.__init__(self)
 
         
     def auth(self):

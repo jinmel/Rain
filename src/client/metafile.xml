@@ -1,18 +1,2 @@
 <Rain>
-
-    <cloud>
-        <name>Google Drive</name>
-        <access_token>129831293198</access_token>
-        <expiry_date>2015-09-30</expiry_date>
-
-        <file>
-            <local_filename>data.txt</local_filename>
-            <remote_filename>Rain/data.txt</remote_filename>
-        </file>
-
-        <file>
-            <local_filename>data2.txt</local_filename>
-            <remote_filename>Rain/data2.txt</remote_filename>
-        </file>
-    </cloud>
-<cloud><name>Box</name><access_token>109239120931</access_token></cloud><cloud><name>DropBox</name><access_token>109239120931</access_token></cloud></Rain>
+<cloud><name>RainLib.ports.googledrive</name><access_token>{"_module": "oauth2client.client", "token_expiry": "2015-05-07T16:59:17Z", "access_token": "ya29.bAGNBCQAlc6OHPnZY6yL1_4oBu4qoi_pncZLUy8QjhZnNT5u_x5PfQRXxxBMnNoiinrQFTOxcgW9Dw", "token_uri": "https://accounts.google.com/o/oauth2/token", "invalid": false, "token_response": {"access_token": "ya29.bAGNBCQAlc6OHPnZY6yL1_4oBu4qoi_pncZLUy8QjhZnNT5u_x5PfQRXxxBMnNoiinrQFTOxcgW9Dw", "token_type": "Bearer", "expires_in": 3599}, "client_id": "492902282535-842pkdbclleopscjruqhtssro68bmuce.apps.googleusercontent.com", "id_token": null, "client_secret": "-kefxxklC6jjUHjGQQe0cQq8", "revoke_uri": "https://accounts.google.com/o/oauth2/revoke", "_class": "OAuth2Credentials", "refresh_token": null, "user_agent": null}</access_token></cloud></Rain>
