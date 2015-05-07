@@ -4,8 +4,6 @@ import xml.etree.ElementTree as ET
 from RainLib.ports import *
 from watchdog.observers import Observer
 
-
-
 META_FILENAME = 'metafile.xml'
 SUPPORTED_CLOUDS = [dropbox.__name__, box.__name__, googledrive.__name__]
 
