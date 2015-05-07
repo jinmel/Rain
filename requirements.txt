@@ -2,3 +2,4 @@ pip install dropbox
 unzip PyDrive.zip
 python setup.py build
 python setup.py install
+pip install watchdog
