@@ -4,6 +4,8 @@ from pydrive.drive import GoogleDrive as _GoogleDrive
 from pydrive.files import GoogleDriveFile
 from os.path import os
 
+__name__ = "Google Drive"
+
 class GoogleDrive(clouddrive.CloudDrive):
     def __init__(self, access_token=None):
         if access_token is not None :
