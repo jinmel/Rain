@@ -4,6 +4,8 @@ from dropbox.client import DropboxOAuth2Flow, DropboxClient
 import urllib
 from .. import clouddrive
 
+__name__ = 'DropBox'
+
 
 class DropBox(clouddrive.CloudDrive):
     

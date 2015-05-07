@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-
 <Rain>
 
     <cloud>
@@ -17,4 +15,4 @@
             <remote_filename>Rain/data2.txt</remote_filename>
         </file>
     </cloud>
-</Rain>
+<cloud><name>Box</name><access_token>109239120931</access_token></cloud><cloud><name>DropBox</name><access_token>109239120931</access_token></cloud></Rain>
