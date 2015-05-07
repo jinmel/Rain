@@ -60,7 +60,7 @@ class DropBox(clouddrive.CloudDrive):
                 return urllib.unquote(item).decode()
  	
 
-
+	redirect_url="http://localhost:8080"
         my_session={}
         Auth_Drop_Running_true=True
         flow = DropboxOAuth2Flow(app_key, app_secret,redirect_url,my_session,"dropbox-auth-csrf-token")    
@@ -78,7 +78,7 @@ class DropBox(clouddrive.CloudDrive):
     
         token, user_id, url_state = flow.finish(MYrequest(Auth_DROPMytoken))
         self.access_token=token
-        super.access_token=token
+        clouddrive.CloudDrive.access_token=token
         self.client=DropboxClient(self.access_token)
         return token
     
