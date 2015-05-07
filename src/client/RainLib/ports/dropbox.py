@@ -74,7 +74,7 @@ class DropBox(clouddrive.CloudDrive):
         token, user_id, url_state = flow.finish(MYrequest(Auth_DROPMytoken))
         self.access_token=token
         super.access_token=token
-        self.client=DropboxClient(access_token)
+        self.client=DropboxClient(self.access_token)
         return token
     
 
