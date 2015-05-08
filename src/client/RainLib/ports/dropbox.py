@@ -9,6 +9,8 @@ __name__ = 'DropBox'
 
 
 class DropBox(clouddrive.CloudDrive):
+    name = "DropBox"
+
     def __init__(self, access_token=None):
         if access_token is not None:
             self.client = DropboxClient(access_token)

@@ -7,6 +7,7 @@ from os.path import os
 __name__ = "Google Drive"
 
 class GoogleDrive(clouddrive.CloudDrive):
+    name = "Google Drive"
     def __init__(self, access_token=None):
         if access_token is not None :
             self.access_token = access_token
