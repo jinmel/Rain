@@ -19,8 +19,8 @@ class DropBox(clouddrive.CloudDrive):
         else:
             clouddrive.CloudDrive.__init__(self)
 
-
-    def auth(self):
+    @staticmethod
+    def auth():
         app_key = 'knbyx2adg14kkn5'
         app_secret = 'kh3ulgqry8jffqp'
         global Auth_DROPMytoken
@@ -79,9 +79,7 @@ class DropBox(clouddrive.CloudDrive):
         httpd.server_close()
 
         token, user_id, url_state = flow.finish(MYrequest(Auth_DROPMytoken))
-        self.access_token = token
         clouddrive.CloudDrive.access_token = token
-        self.client = DropboxClient(self.access_token)
         return token
 
 
