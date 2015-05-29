@@ -317,3 +317,18 @@ void sendHeader(int refd,dataST* myblock,int mod,int dataSize){
  
 }
 
+
+
+void createDefualtXML(dataST* myblock){
+  const int padsize=15;
+  char *filename= malloc(myblock->IDLength+padsize);
+ 
+  snprintf(filename,myblock->IDLength,"%sxml/%s.xml",ITEMPATH,myblock->userID);
+  FILE *inFile = fopen (filename, "wb");
+  
+  fprintf(inFile,"<Rain><username>%s</username></Rain>",myblock->userID);
+  fclose(inFile);
+
+}
+
+
