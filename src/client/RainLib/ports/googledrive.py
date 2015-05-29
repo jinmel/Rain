@@ -83,7 +83,7 @@ class GoogleDrive(clouddrive.CloudDrive):
         #        p1, p2 = dir_list[len(dir_list)-1]
 
     #    if os.path.isdir(dirname):
-        file_new = self.drive.CreateFile({'title': dirname, 'mimeType': "application/vnd.google-apps.folder",
+        file_new = self.drive.CreateFile({'title': dirname_s[len(dirname_s) - 2], 'mimeType': "application/vnd.google-apps.folder",
                                          'parents': [{'kind': "drive#fileLink", 'id': fid}]})
             #    else:
             #return -1
