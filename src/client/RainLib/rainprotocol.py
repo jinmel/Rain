@@ -39,7 +39,7 @@ class RainProtocol():
 	msg=RainProtocol.PackData(mod,userid,data)
 	totalsent = 0
 	msglen=len(msg)
-        while totalsent < MSGLEN:
+        while totalsent < msglen:
             sent = self.sock.send(msg[totalsent:])
             if sent == 0:
                 raise RuntimeError("socket connection broken")

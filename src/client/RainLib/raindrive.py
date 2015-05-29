@@ -77,20 +77,6 @@ class RainDrive(object):
 	RainProtocol.SendAndRecv(0x4,userid,"")	
 
 
-	RainProtocol.SendAndRecv(0x4,userid,"")
-
-
-	RainProtocol.SendAndRecv(0x4,userid,"")
-
-
-	RainProtocol.SendAndRecv(0x4,userid,"")
-
-
-	RainProtocol.SendAndRecv(0x4,userid,"")
-
-
-	RainProtocol.SendAndRecv(0x4,userid,"")
-
 
 
 
