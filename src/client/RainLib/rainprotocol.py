@@ -9,6 +9,7 @@ class RainProtocol():
 	raise NotImplemented
 
 
+     @staticmethod
      def UnPackHeader(header) :
 	#return mod,useridlen, Dataoffset,DataLenth
 	raise NotImplemented
@@ -35,7 +36,7 @@ class RainProtocol():
 	sock=socket(AF_INET,SOCK_STREAM)
 	sock.connet((host,port))
 	
-	msg=PackData(mod,userid,data)
+	msg=RainProtocol.PackData(mod,userid,data)
 	totalsent = 0
 	msglen=len(msg)
         while totalsent < MSGLEN:
@@ -44,10 +45,10 @@ class RainProtocol():
                 raise RuntimeError("socket connection broken")
             totalsent = totalsent + sent
 	
-	header=RecvData(6)
-	mod,idlen,Dataoffset,DataLen=UnpackHeader(header)
-	RecvData(Dataoffset-6)
-	realData=RecvData(DataLen)
+	header=RainProtocol.RecvData(6)
+	mod,idlen,Dataoffset,DataLen=RainProtocol.UnpackHeader(header)
+	RainProtocol.RecvData(Dataoffset-6)
+	realData=RainProtocol.RecvData(DataLen)
 		
 	sock.close()
 	return realData
