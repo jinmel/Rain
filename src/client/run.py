@@ -64,6 +64,6 @@ if __name__ == "__main__":
     elif choice == 3:
         rdrive = RainDrive(mfa)
         gdrive = GoogleDrive(mfa.get_cloud_access_token('Google Drive'))
-        print gdrive.write("/Rain/asdfasdf","sadfiasiofdjsa")
+        print gdrive.write("/Rain/yeeee","yeeeee")
         print "Write success"
 

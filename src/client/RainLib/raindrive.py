@@ -4,7 +4,7 @@ from ports.googledrive import GoogleDrive
 from ports.box import Box
 
 
-RAIN_REMOTE_PATH = '/Rain/'
+RAIN_REMOTE_PATH = '/Rain'
 
 
 class RainDrive(object):
@@ -37,7 +37,9 @@ class RainDrive(object):
         cloud = self.clouds[0] # add file to cloud that has highest capacity
         f = open(filename, 'rb')
         data = f.read()
-        remote_filename = path.join(RAIN_REMOTE_PATH, filename)
+        f.close()
+        remote_filename = path.join(RAIN_REMOTE_PATH, filename).replace('./','')
+        print remote_filename,data
         cloud.write(remote_filename, data)
         self.mfa.add_file(cloud.name, filename, remote_filename, str(path.getsize(filename)))
         self.mfa.write()
