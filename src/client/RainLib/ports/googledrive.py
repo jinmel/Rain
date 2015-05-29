@@ -82,11 +82,11 @@ class GoogleDrive(clouddrive.CloudDrive):
         #        dir_list = self.make_parents_list(dirname_s)
         #        p1, p2 = dir_list[len(dir_list)-1]
 
-        if os.path.isdir(dirname):
-            file_new = self.drive.CreateFile({'title': dirname, 'mimeType': "application/vnd.google-apps.folder",
+    #    if os.path.isdir(dirname):
+        file_new = self.drive.CreateFile({'title': dirname, 'mimeType': "application/vnd.google-apps.folder",
                                          'parents': [{'kind': "drive#fileLink", 'id': fid}]})
-        else:
-            return -1
+            #    else:
+            #return -1
         try:
             file_new.Upload()
         except:
