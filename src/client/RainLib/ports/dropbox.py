@@ -18,8 +18,11 @@ class DropBox(clouddrive.CloudDrive):
 
     @staticmethod
     def auth():
-        app_key = 'knbyx2adg14kkn5'
-        app_secret = 'kh3ulgqry8jffqp'
+        #app_key = 'knbyx2adg14kkn5'
+        #app_secret = 'kh3ulgqry8jffqp'
+        app_key = 'eif0l7bgnpb06di'
+        app_secret = 'qa02jhdo4jrwaid'
+        
         global Auth_DROPMytoken
         global Auth_Drop_Running_true
 
@@ -117,6 +120,10 @@ class DropBox(clouddrive.CloudDrive):
 	        return -1
         return a["quota"]-a["shared"]-a["normal"]
 
-  
-     
+    def listing (self, path="/") :
 
+        lists=self.client.metadata(path)
+        filelist=[]
+        for x in lists["contents"] :
+            filelist.append((x['path'],x['is_dir']))
+        return filelist 
