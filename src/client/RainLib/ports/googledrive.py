@@ -10,20 +10,16 @@ __name__ = "Google Drive"
 class GoogleDrive(clouddrive.CloudDrive):
     name = "Google Drive"
 
-    def __init__(self, access_token=None):
-        if access_token is not None:
-            self.access_token = access_token
-            clouddrive.CloudDrive.__init__(self, access_token)
-        else:
-            clouddrive.CloudDrive.__init__(self)
-        if self.access_token is not None:
-            f = open("oauth.txt", "w")
-            f.write(self.access_token)
-            f.close()
-            gauth = GoogleAuth()
-            gauth.LoadCredentialsFile("oauth.txt")
-            os.remove("oauth.txt")
-            self.drive = _GoogleDrive(gauth)
+    def __init__(self, access_token):
+        self.access_token = access_token
+        clouddrive.CloudDrive.__init__(self, access_token)
+        f = open("oauth.txt", "w")
+        f.write(self.access_token)
+        f.close()
+        gauth = GoogleAuth()
+        gauth.LoadCredentialsFile("oauth.txt")
+        os.remove("oauth.txt")
+        self.drive = _GoogleDrive(gauth)
 
     @staticmethod
     def auth():
@@ -133,8 +129,8 @@ class GoogleDrive(clouddrive.CloudDrive):
         fid = ListFolder('root', filename)
         return fid
 
-    def ListFolder(self, parent, filename):
-        file_list = self.drive.ListFile({'q': "'%s' in parents and trashed=false" % parent}).GetList()
+    def ListFolder(self, par, filename):
+        file_list = self.drive.ListFile({'q': "'%s' in parents and trashed=false" % par}).GetList()
         for f in file_list:
             if f['title'] == "filename":
                 return f['id']
