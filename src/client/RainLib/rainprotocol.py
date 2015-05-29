@@ -4,8 +4,8 @@ RAIN_REMOTE_PATH = '/Rain/'
 
 
 def PackData(mod, userid, data):
-    #return sendabledata
-    raise NotImplemented
+    fmt="<BBHH%ds%ds" % (len(userid),len(data))
+    return struct.pack(fmt,mod,len(userid),len(userid+6),len(data),userid,data)
 
 
 def UnPackHeader(header):
@@ -53,19 +53,19 @@ class RainPacketBuilder(object):
         self.user_id = user_id
 
     def login(self):
-        pass
+        return PackData(0x0, self.user_id, "")
 
-    def xml_request(self):
-        pass
+    def xml_request(self): 
+        return PackData(0x1, self.user_id, "")
 
-    def xml_upload(self):
-        pass
+    def xml_upload(self,xmldata): #string
+        return PackData(0x4, self.user_id, xmldata)
 
     def xml_lock(self): #allow modify
-        pass
+        return PackData(0x3, self.user_id,"")
 
     def hash_request(self):
-        pass
+        return PackData(0x2, self.user_id,"")
 
 
 
