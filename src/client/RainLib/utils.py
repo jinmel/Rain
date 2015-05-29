@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import os
 
 META_FILE_NAME = 'metafile.xml'
 
@@ -37,6 +38,12 @@ class RainMetaFileAdapter(object):
         for f in files:
             cloud_elem.remove(f)
 
+    def move_file(self, cloud_name, src_path, dst_path):
+        cloud_elem = self._get_cloud_elem(cloud_name)
+        target = cloud_elem.find("./file[local_filename='" + src_path + "']")
+        target.find("./local_filename").text = dst_path
+        target.find("./remote_filename").text = os.path.join("/Rain", dst_path)
+
     # Read operations
 
     def _get_cloud_elem(self, cloud_name):
@@ -70,7 +77,7 @@ class RainMetaFileAdapter(object):
         return [f.text for f in files]
 
     def get_remote_file_list(self, cloud_name):
-        files = self.root.findall("./cloud[name='" + cloud_name + "']/file/local_filename")
+        files = self.root.findall("./cloud[name='" + cloud_name + "']/file/remote_filename")
         return [f.text for f in files]
 
 
