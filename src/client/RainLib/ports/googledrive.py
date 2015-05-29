@@ -2,7 +2,7 @@ from .. import clouddrive
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive as _GoogleDrive
 from pydrive.files import GoogleDriveFile
-from os.path import os
+import os
 
 __name__ = "Google Drive"
 
@@ -18,8 +18,9 @@ class GoogleDrive(clouddrive.CloudDrive):
         f.close()
         gauth = GoogleAuth()
         gauth.LoadCredentialsFile("oauth.txt")
-        os.remove("oauth.txt")
         self.drive = _GoogleDrive(gauth)
+        if os.access("oauth.txt", os.F_OK):
+          os.remove("oauth.txt")
 
     @staticmethod
     def auth():
@@ -30,7 +31,7 @@ class GoogleDrive(clouddrive.CloudDrive):
         f = open("oauth.txt")
         access_token = f.readline()
         f.close()
-        os.remove("oauth.txt")
+        os.remove("./oauth.txt")
         return access_token
 
     #        else :
@@ -92,10 +93,12 @@ class GoogleDrive(clouddrive.CloudDrive):
             return -1
         return 1
 
-    def delete(self, filename):
-        fid = self.find_file_id(filename)
+    def delete(self, filename): 
+        dirname_s = filename.split("/")
+        fid = self.find_file_id(dirname_s[len(dirname_s) - 1])
         if fid is None:
-            return -1
+          return -1
+        
         else:
             file_new = self.drive.CreateFile({'id': fid})
             file_new._FilesDelete()
@@ -136,5 +139,8 @@ class GoogleDrive(clouddrive.CloudDrive):
                 return f['id']
 
             if f['mimeType'] == 'application/vnd.google-apps.folder':
-                self.ListFolder(f['id'], filename)
+                print "hi!"
+                fid = self.ListFolder(f['id'], filename)
+                if fid is not None :
+                  return fid
         return None

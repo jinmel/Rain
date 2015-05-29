@@ -11,6 +11,7 @@ from RainLib.utils import RainMetaFileAdapter
 from RainLib.raindrive import RainDrive
 import logging
 import time
+import os
 
 SUPPORTED_CLOUDS = [DropBox.name, GoogleDrive.name, Box.name]
 
@@ -62,8 +63,8 @@ if __name__ == "__main__":
             observer.stop()
         observer.join()
     elif choice == 3:
-        rdrive = RainDrive(mfa)
+      #rdrive = RainDrive(mfa)
         gdrive = GoogleDrive(mfa.get_cloud_access_token('Google Drive'))
-        print gdrive.write("/Rain/yeeee","yeeeee")
-        print "Write success"
+        print gdrive.delete("/Rain/yeeee")
+        print "Delete success"
 
