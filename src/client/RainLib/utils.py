@@ -84,6 +84,14 @@ class RainMetaFileAdapter(object):
         files = self.root.findall("./cloud[name='" + cloud_name + "']/file/remote_filename")
         return [f.text for f in files]
 
+    def get_username(self):
+        return self.root.find("./username").text
+
+    def get_raw_xml_file(self):
+        return ET.tostring(self.root)
+
+
+
 
 
 
