@@ -53,7 +53,11 @@ class RainMetaFileAdapter(object):
         return cloud
 
     def get_cloud_name_by_local_filename(self, filename):
-        return self.root.find(".//file[local_filename='" + filename + "']/..name").text
+        cloud_name = self.root.find(".//file[local_filename='" + filename + "']/..name")
+        if cloud_name is None:
+            raise KeyError()
+        else:
+            return cloud_name.text
 
     def get_all_cloud_name(self):
         names = self.root.findall("./cloud/name")
