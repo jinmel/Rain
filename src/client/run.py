@@ -65,6 +65,7 @@ if __name__ == "__main__":
     elif choice == 3:
       #rdrive = RainDrive(mfa)
         gdrive = GoogleDrive(mfa.get_cloud_access_token('Google Drive'))
-        print gdrive.delete("/Rain/yeeee")
+        
+        gdrive.write("/Rain/yeee/asda", "sdfsdf")
         print "Delete success"
 

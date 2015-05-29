@@ -71,6 +71,8 @@ class GoogleDrive(clouddrive.CloudDrive):
         return 1
 
     def mkdir(self, dirname):
+        if dirname[-1] != "/" :
+          dirname = dirname + "/"
         dirname_s = dirname.split("/")
         if len(dirname_s) > 3:
             fid = self.find_file_id(dirname_s[len(dirname_s) - 3])
