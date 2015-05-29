@@ -12,9 +12,9 @@ class DropBox(clouddrive.CloudDrive):
     name = "DropBox"
 
     def __init__(self, access_token):
-            self.client = DropboxClient(access_token)
-            self.access_token = access_token
-            clouddrive.CloudDrive.__init__(self, access_token)
+        self.client = DropboxClient(access_token)
+        self.access_token = access_token
+        clouddrive.CloudDrive.__init__(self, access_token)
 
     @staticmethod
     def auth():
@@ -114,12 +114,11 @@ class DropBox(clouddrive.CloudDrive):
         return 1
 
     def capacity(self):
-	try:
-	    a=self.client.account_info()["quota_info"]
-	except:
-	    return -1
-
-	return a["quota"]-a["shared"]-a["normal"]
+        try:
+            a=self.client.account_info()["quota_info"]
+        except:
+	        return -1
+        return a["quota"]-a["shared"]-a["normal"]
 
   
      
