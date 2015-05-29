@@ -104,6 +104,10 @@ class GoogleDrive(clouddrive.CloudDrive):
             file_new = self.drive.CreateFile({'id': fid})
             file_new._FilesDelete()
             return 1
+    
+    def capacity(self):
+      return self.drive.capacity()
+
 
     """
     def make_parents_list(self, dirname_s):
