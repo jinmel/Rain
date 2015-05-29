@@ -112,5 +112,15 @@ class DropBox(clouddrive.CloudDrive):
         except:
             return -1
         return 1
-    
+
+     def capacity(self):
+	try:
+	    a=self.client.account_info()["quota_info"]
+	except:
+	    return -1
+
+	return a["quota"]-a["shared"]-a["normal"]
+
+  
+     
 
