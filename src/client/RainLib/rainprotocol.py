@@ -2,7 +2,7 @@ from socket import *
 
 RAIN_REMOTE_PATH = '/Rain/'
 
-class RainProtocall():
+class RainProtocol():
      @staticmethod
      def PackData(mod,userid,data):
 	#return sendabledata
