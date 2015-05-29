@@ -54,7 +54,7 @@ class GoogleDrive(clouddrive.CloudDrive):
             file_new.GetContentFile(filename)
             return 1
 
-    def write(self, filename):
+    def write(self, filename, data):
         dirname_s = dirname.split("/")
         if len(dirname_s) > 2:
             fid = self.find_file_id(dirname_s[len(dirname_s) - 2])
@@ -65,7 +65,7 @@ class GoogleDrive(clouddrive.CloudDrive):
 
         file_new = self.drive.CreateFile({'title': filename, 'parents': [{'kind': "dirve#fileLink", 'id': fid}]})
         try:
-            file_new.SetContentFile(filename)
+            file_new.SetContentString(data)
 
             file_new.Upload()
         except:
@@ -122,6 +122,8 @@ class GoogleDrive(clouddrive.CloudDrive):
         
         return parents_list
     """
+
+ 
 
     def find_file_id(self, filename):
         fid = ListFolder('root', filename)
