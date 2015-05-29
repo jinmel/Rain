@@ -3,6 +3,7 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive as _GoogleDrive
 from pydrive.files import GoogleDriveFile
 import os
+from os import path
 
 __name__ = "Google Drive"
 
@@ -56,7 +57,7 @@ class GoogleDrive(clouddrive.CloudDrive):
         if len(dirname_s) > 2:
             fid = self.find_file_id(dirname_s[len(dirname_s) - 2])
             if fid is None:
-                return -1
+                return self.mkdir_rec(''.join(dirname_s[len(dirname_s) - 2]) + "/")
         else:
             fid = 'root'
 
@@ -70,6 +71,29 @@ class GoogleDrive(clouddrive.CloudDrive):
 
         return 1
 
+    def mkdir_rec(self, dirname) :
+      dir_list = dirname.split('/')[1:-1]
+
+      dir_rec = '/'
+      print dir_list
+      for dir_elem in dir_list:
+        fid = self.find_file_id(dir_elem)
+        dir_rec = dir_rec + dir_elem + "/"
+        if fid is None :
+          self.mkdir(dir_rec)
+
+#        self.mkdir(dir_elem)
+
+#      dirname_s = dirname.split("/")
+#      for dirr in dirname_s :
+#        if dirr != '' :
+#          fid = self.find_file_id(dirr)
+#          if fid is None :
+#            mkdir(dirr)
+          
+
+
+
     def mkdir(self, dirname):
         if dirname[-1] != "/" :
           dirname = dirname + "/"
@@ -77,7 +101,7 @@ class GoogleDrive(clouddrive.CloudDrive):
         if len(dirname_s) > 3:
             fid = self.find_file_id(dirname_s[len(dirname_s) - 3])
             if fid is None:
-                return -1
+              return -1;
         else:
             fid = 'root'
 
