@@ -8,25 +8,14 @@ class RainFileSystemEventHandler(FileSystemEventHandler):
         self.rain_drive = rain_drive
 
     def on_created(self, event):
-        print 'create', event.src_path
-        pass
+        if not event.is_directory:
+            print 'create file' + event.src_path
+            self.rain_drive.new_file(event.src_path)
 
     def on_deleted(self, event):
-        print 'delete', event.src_path
-        pass
-
-    def on_modified(self, event):
-        print 'modify', event.src_path
-        pass
-
-    def on_moved(self, event):
-        print 'move', event.src_path
-        pass
-
-    def on_any_event(self, event):
-        print event.event_type
-        pass
-
+        if not event.is_directory:
+            print 'delete file' + event.src_path
+            self.rain_drive.remove_file(event.src_path)
 
 
 

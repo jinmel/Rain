@@ -7,7 +7,6 @@ class CloudDrive(object):
         #TODO : Do authentification and return access token
         raise NotImplementedError()
 
-
     def read(self, filename):
         #TODO : Read filename(remote_filename) from cloud drive and return contets on success or -1 on failure
         raise NotImplementedError()

@@ -51,7 +51,7 @@ class GoogleDrive(clouddrive.CloudDrive):
             return 1
 
     def write(self, filename, data):
-        dirname_s = dirname.split("/")
+        dirname_s = filename.split("/")
         if len(dirname_s) > 2:
             fid = self.find_file_id(dirname_s[len(dirname_s) - 2])
             if fid is None:
@@ -59,7 +59,7 @@ class GoogleDrive(clouddrive.CloudDrive):
         else:
             fid = 'root'
 
-        file_new = self.drive.CreateFile({'title': filename, 'parents': [{'kind': "dirve#fileLink", 'id': fid}]})
+        file_new = self.drive.CreateFile({'title': dirname_s[len(dirname_s) - 1], 'parents': [{'kind': "dirve#fileLink", 'id': fid}]})
         try:
             file_new.SetContentString(data)
 
@@ -82,7 +82,7 @@ class GoogleDrive(clouddrive.CloudDrive):
         #        p1, p2 = dir_list[len(dir_list)-1]
 
         if os.path.isdir(dirname):
-            file_new = drive.CreateFile({'title': dirname, 'mimeType': "application/vnd.google-apps.folder",
+            file_new = self.drive.CreateFile({'title': dirname, 'mimeType': "application/vnd.google-apps.folder",
                                          'parents': [{'kind': "drive#fileLink", 'id': fid}]})
         else:
             return -1
@@ -126,15 +126,15 @@ class GoogleDrive(clouddrive.CloudDrive):
  
 
     def find_file_id(self, filename):
-        fid = ListFolder('root', filename)
+        fid = self.ListFolder('root', filename)
         return fid
 
     def ListFolder(self, par, filename):
         file_list = self.drive.ListFile({'q': "'%s' in parents and trashed=false" % par}).GetList()
         for f in file_list:
-            if f['title'] == "filename":
+            if f['title'] == filename:
                 return f['id']
 
             if f['mimeType'] == 'application/vnd.google-apps.folder':
-                ListFolder(f['id'], filename)
+                self.ListFolder(f['id'], filename)
         return None
