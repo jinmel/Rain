@@ -133,17 +133,32 @@ int doit(int refd){
 }
 
 void receiveData(int refd,dataST* myblock){
-    read(refd,(void *) myblock,6);
+    int MSGSize,readpoint;
+
+    MSGSize=6;
+    readpoint=0;
+    
+    while(readpoint<MSGSize)
+        readpoint+=read(refd,(void *)myblock+readpoint,MSGSize-readpoint);
+    
     if(myblock->Dataoffset!=6){
-   	myblock->userID=malloc(sizeof(char)*(myblock->Dataoffset-5));
-    	read(refd,myblock->userID, myblock->Dataoffset-6);
-	myblock->userID[myblock->IDLength]='\0';
+   	    myblock->userID=malloc(sizeof(char)*(myblock->Dataoffset-5));
+   
+        MSGSize=myblock->Dataoffset-6;
+        readpoint=0;
+        while(readpoint<MSGSize)
+            readpoint+=read(refd,myblock->userID+readpoint,MSGSize-readpoint);
+	    myblock->userID[myblock->IDLength]='\0';
 	}
     else myblock->userID=NULL;
     if(myblock->DataLength!=0){
     	myblock->data=malloc(sizeof(char)*(myblock->DataLength+1)); 
-    	read(refd,myblock->data, myblock->DataLength);
-   	myblock->data[myblock->DataLength]='\0';
+
+        MSGSize=myblock->DataLength;
+        readpoint=0;
+        while(readpoint<MSGSize)
+            readpoint+=read(refd,myblock->data+readpoint,MSGSize-readpoint);
+   	    myblock->data[myblock->DataLength]='\0';
 	}
     else myblock->data=NULL;
 }
