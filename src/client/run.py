@@ -51,17 +51,6 @@ if __name__ == "__main__":
         print 'Metafile updated'
     elif choice == 2:
         rdrive = RainDrive(mfa)
-        cloud_names = mfa.get_all_cloud_name()
-        for cloud_name in cloud_names:
-            if cloud_name == DropBox.name:
-                rdrive.add_cloud(DropBox(mfa.get_cloud_access_token(cloud_name)))
-            elif cloud_name == GoogleDrive.name:
-                rdrive.add_cloud(GoogleDrive(mfa.get_cloud_access_token(cloud_name)))
-            elif cloud_name == Box.name:
-                rdrive.add_cloud(Box(mfa.get_cloud_access_token(cloud_name)))
-            else:
-                raise Exception('Unknown cloud service name: ' + cloud_name)
-
         observer = Observer()
         event_handler = RainFileSystemEventHandler(rdrive)
         observer.schedule(event_handler, ".", recursive=True)
@@ -73,9 +62,8 @@ if __name__ == "__main__":
             observer.stop()
         observer.join()
     elif choice == 3:
-        mfa.add_file('DropBox', './data3.txt', '/Rain/data3.txt', '1024')
-        print mfa.get_local_file_list('DropBox')
-        print mfa.get_remote_file_list('DropBox')
-        print mfa.get_cloud_name_by_local_filename('./data3.txt')
-        print mfa.get_all_cloud_name()
-        print mfa.get_file_map('DropBox')
+        rdrive = RainDrive(mfa)
+        gdrive = GoogleDrive(mfa.get_cloud_access_token('Google Drive'))
+        print gdrive.write("/Rain/yeeee","yeeeee")
+        print "Write success"
+

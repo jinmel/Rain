@@ -1,12 +1,26 @@
 from os import path
+from ports.dropbox import DropBox
+from ports.googledrive import GoogleDrive
+from ports.box import Box
 
-RAIN_REMOTE_PATH = '/Rain/'
+
+RAIN_REMOTE_PATH = '/Rain'
 
 
 class RainDrive(object):
     def __init__(self, metafile_adapter):
         self.clouds = []
         self.mfa = metafile_adapter
+        cloud_names = self.mfa.get_all_cloud_name()
+        for cloud_name in cloud_names:
+            if cloud_name == DropBox.name:
+                self.add_cloud(DropBox(self.mfa.get_cloud_access_token(cloud_name)))
+            elif cloud_name == GoogleDrive.name:
+                self.add_cloud(GoogleDrive(self.mfa.get_cloud_access_token(cloud_name)))
+            elif cloud_name == Box.name:
+                self.add_cloud(Box(self.mfa.get_cloud_access_token(cloud_name)))
+            else:
+                raise Exception('Unknown cloud service name: ' + cloud_name)
 
     def add_cloud(self, cloud):
         self.clouds.append(cloud)
@@ -23,9 +37,11 @@ class RainDrive(object):
         cloud = self.clouds[0] # add file to cloud that has highest capacity
         f = open(filename, 'rb')
         data = f.read()
-        remote_filename = path.join(RAIN_REMOTE_PATH, filename)
+        f.close()
+        remote_filename = path.join(RAIN_REMOTE_PATH, filename).replace('./','')
+        print remote_filename,data
         cloud.write(remote_filename, data)
-        self.mfa.add_file(cloud.name, filename, remote_filename, path.getsize(filename))
+        self.mfa.add_file(cloud.name, filename, remote_filename, str(path.getsize(filename)))
         self.mfa.write()
         #TODO: server interaction
 
@@ -43,7 +59,6 @@ class RainDrive(object):
         self.mfa.remove_file(cloud_name, filename)
         self.mfa.write()
         #TODO: server interaction
-
 
 
 
