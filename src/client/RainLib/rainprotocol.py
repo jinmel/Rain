@@ -5,6 +5,17 @@ RAIN_REMOTE_PATH = '/Rain/'
 class RainProtocol():
      @staticmethod
      def PackData(mod,userid,data):
+       if mod == 0 :
+         pass
+       elif mod == 1 :
+         pass
+       elif mod == 2 :
+         pass
+       elif mod == 3 :
+         pass
+       elif mod == 4 :
+         pass
+
 	#return sendabledata
 	raise NotImplemented
 
