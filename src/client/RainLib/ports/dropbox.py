@@ -59,7 +59,7 @@ class DropBox(clouddrive.CloudDrive):
                 return urllib.unquote(item).decode()
 
 
-        redirect_url = "http://localhost:8080"
+        redirect_url = "http://localhost:8787"
         my_session = {}
         Auth_Drop_Running_true = True
         flow = DropboxOAuth2Flow(app_key, app_secret, redirect_url, my_session, "dropbox-auth-csrf-token")
@@ -68,7 +68,7 @@ class DropBox(clouddrive.CloudDrive):
         webbrowser.open(authorize_url)
 
         try:
-            httpd = BaseHTTPServer.HTTPServer(("", 8080), AuthHandler)
+            httpd = BaseHTTPServer.HTTPServer(("", 8787), AuthHandler)
             while keep_running():
                 httpd.handle_request()
         except KeyboardInterrupt:
@@ -82,22 +82,19 @@ class DropBox(clouddrive.CloudDrive):
 
     def read(self, filename):
         try:
-            f = open(filename, 'rb', overwrite)
-            response = self.client.put_file(filename, f)
-            f.close()
+            data=[]
+            with self.client.get_file(filename) as f:
+                data+=f.read()
         except:
             return -1
-        return 1
+        return data
 
-    def write(self, filename):
+    def write(self, filename, data):
         try:
-            out = open("/tmp" + filename, 'wb')
-            with self.client.get_file(remote_file) as f:
-                out.write(f.read())
-            out.close()
+            response = self.client.put_file(filename, data,True)
         except:
             return -1
-        return 1
+        return 1    
 
     def mkdir(self, dirname):
         try:
