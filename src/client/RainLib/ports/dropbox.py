@@ -11,13 +11,10 @@ __name__ = 'DropBox'
 class DropBox(clouddrive.CloudDrive):
     name = "DropBox"
 
-    def __init__(self, access_token=None):
-        if access_token is not None:
+    def __init__(self, access_token):
             self.client = DropboxClient(access_token)
             self.access_token = access_token
             clouddrive.CloudDrive.__init__(self, access_token)
-        else:
-            clouddrive.CloudDrive.__init__(self)
 
     @staticmethod
     def auth():
