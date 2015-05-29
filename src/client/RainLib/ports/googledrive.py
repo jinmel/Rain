@@ -133,12 +133,12 @@ class GoogleDrive(clouddrive.CloudDrive):
         fid = ListFolder('root', filename)
         return fid
 
-    def ListFolder(parent, filename):
+    def ListFolder(self, parent, filename):
         file_list = self.drive.ListFile({'q': "'%s' in parents and trashed=false" % parent}).GetList()
         for f in file_list:
             if f['title'] == "filename":
                 return f['id']
 
             if f['mimeType'] == 'application/vnd.google-apps.folder':
-                ListFolder(f['id'])
+                ListFolder(f['id'], filename)
         return None
