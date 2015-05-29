@@ -2,7 +2,7 @@ from os import path
 from ports.dropbox import DropBox
 from ports.googledrive import GoogleDrive
 from ports.box import Box
-
+from rainprotocol import RainProtocol 
 
 RAIN_REMOTE_PATH = '/Rain'
 
@@ -34,6 +34,14 @@ class RainDrive(object):
         return None
 
     def new_file(self, filename):
+	
+	while RainProtocol.SendAndRecv(0x3,userid,"")!="YES" :
+		sleep(5)
+		
+	"""
+	get instance
+	"""
+
         cloud = self.clouds[0] # add file to cloud that has highest capacity
         f = open(filename, 'rb')
         data = f.read()
@@ -43,9 +51,16 @@ class RainDrive(object):
         cloud.write(remote_filename, data)
         self.mfa.add_file(cloud.name, filename, remote_filename, str(path.getsize(filename)))
         self.mfa.write()
-        #TODO: server interaction
+
+	"""
+	free instance
+	"""
+	RainProtocol.SendAndRecv(0x4,userid,"")	
+
 
     def remove_file(self, filename):
+	while RainProtocol.SendAndRecv(0x3,userid,"")!="YES" :
+		sleep(5)	
         # get corresponding cloud drive by local filename
         cloud_name = self.mfa.get_cloud_name_by_local_filename(filename)
         mapping = self.mfa.get_file_map(cloud_name)
@@ -59,6 +74,9 @@ class RainDrive(object):
         self.mfa.remove_file(cloud_name, filename)
         self.mfa.write()
         #TODO: server interaction
+	RainProtocol.SendAndRecv(0x4,userid,"")	
+
+
 
 
 
