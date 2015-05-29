@@ -62,6 +62,6 @@ class RainDrive(object):
     def dump_metafile(self):
         return self.mfa.get_raw_xml_file()
 
-    def set_metafile_adpater(self,mfa):
+    def set_metafile_adpater(self, mfa):
         self.mfa = mfa
 
