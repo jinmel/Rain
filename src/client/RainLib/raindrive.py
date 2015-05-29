@@ -59,11 +59,9 @@ class RainDrive(object):
 
 
     def remove_file(self, filename):
-        
 	while RainProtocol.SendAndRecv(0x3,userid,"")!="YES" :
-		sleep(5)
-		
-	# get corresponding cloud drive by local filename
+		sleep(5)	
+        # get corresponding cloud drive by local filename
         cloud_name = self.mfa.get_cloud_name_by_local_filename(filename)
         mapping = self.mfa.get_file_map(cloud_name)
         remote_filename = mapping[filename]
@@ -77,6 +75,21 @@ class RainDrive(object):
         self.mfa.write()
         #TODO: server interaction
 	RainProtocol.SendAndRecv(0x4,userid,"")	
+
+
+	RainProtocol.SendAndRecv(0x4,userid,"")
+
+
+	RainProtocol.SendAndRecv(0x4,userid,"")
+
+
+	RainProtocol.SendAndRecv(0x4,userid,"")
+
+
+	RainProtocol.SendAndRecv(0x4,userid,"")
+
+
+	RainProtocol.SendAndRecv(0x4,userid,"")
 
 
 
