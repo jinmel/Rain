@@ -90,7 +90,7 @@ class DropBox(clouddrive.CloudDrive):
                 data+=f.read()
         except:
             return -1
-        return data
+        return ''.join(data)
 
     def write(self, filename, data):
         try:
