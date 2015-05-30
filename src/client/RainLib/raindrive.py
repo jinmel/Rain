@@ -1,4 +1,5 @@
 from os import path
+import os
 from ports.dropbox import DropBox
 from ports.googledrive import GoogleDrive
 from ports.box import Box
@@ -9,7 +10,7 @@ from socket import *
 from hashlib import md5
 
 RAIN_REMOTE_PATH = '/Rain'
-RAIN_HOST = "plus7.postech.ac.kr"
+RAIN_HOST = "localhost"
 RAIN_PORT = 1287
 RAIN_ADDR = (RAIN_HOST, RAIN_PORT)
 
@@ -75,8 +76,34 @@ class RainDrive(object):
         self.upload_metafile()
 
     def sync(self):
-        pass
+        if not self.check_hash(): #hash is different->get new xml
+            latest_xml = self.request_metafile()
+            latest_mfa = RainMetaFileAdapter()
+            latest_mfa.set_metafile_from_string(latest_xml)
+            latest_cloud_names = latest_mfa.get_all_cloud_name()
+            for cloud_name in latest_cloud_names:
+                cloud = self.get_cloud_by_name(cloud_name)
+                latest_file_map = latest_mfa.get_file_map(cloud_name)
+                current_file_map = self.mfa.get_file_map(cloud_name)
+                diff = set(latest_file_map.keys()) - set(current_file_map.keys())
+                new_local_files = list(diff)
+                for new_local_file in new_local_files:
+                    remote_file_name = latest_file_map[new_local_file]
+                    data = cloud.read(latest_file_map[new_local_file])
+                    f = open(new_local_file,"wb")
+                    f.write(data)
+                    f.close()
 
+                diff = set(current_file_map.keys()) - set(latest_file_map.keys())
+                delete_local_files = list(diff)
+                for deleted_local_file in delete_local_files:
+                    os.unlink(deleted_local_file)
+                    # no need to request delete to cloud drive because it
+                    # already has been deleted by another node
+
+            #finally, update current mfa to latest mfa
+            self.mfa = latest_mfa
+            self.mfa.dump()
 
     def login(self):
         s = socket(AF_INET, SOCK_STREAM)
@@ -111,6 +138,7 @@ class RainDrive(object):
         return xml_content
 
     def acquire_lock(self):
+        print "acquiring lock"
         s = socket(AF_INET, SOCK_STREAM)
         s.connect(RAIN_ADDR)
         s.send(self.packet_builder.xml_lock())
@@ -119,6 +147,7 @@ class RainDrive(object):
         return lock == "YES"
 
     def upload_metafile(self):
+        print "uploading metafile.."
         s = socket(AF_INET,SOCK_STREAM)
         s.connect(RAIN_ADDR)
         current_xml_content = self.mfa.get_raw_xml()

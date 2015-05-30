@@ -12,11 +12,11 @@ class RainMetaFileAdapter(object):
     def dump(self):
         self.metafile.write(META_FILE_NAME)
 
-    def set_metafile_from_string(self,metafile_content):
+    def set_metafile_from_string(self, metafile_content):
         self.metafile = ET.XML(metafile_content)
         self.root = self.metafile.getroot()
 
-    def set_metafile(self,filename):
+    def set_metafile(self, filename):
         self.metafile = ET.parse(filename)
         self.root = self.metafile.getroot()
 
@@ -34,6 +34,7 @@ class RainMetaFileAdapter(object):
 
     def add_file(self, cloud_name, local_filename, remote_filename, file_size):
         file = ET.Element('file')
+        file.attrib = {"cloud": cloud_name}
         ET.SubElement(file, 'local_filename').text = local_filename
         ET.SubElement(file, 'remote_filename').text = remote_filename
         ET.SubElement(file, 'file_size').text = file_size
