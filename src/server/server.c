@@ -34,7 +34,7 @@ typedef struct {
 
 int doit(int refd);
 void receiveData(int refd,dataST* myblock);
-void rogin(int refd,dataST* myblock);
+void login(int refd,dataST* myblock);
 void xmlReq(int refd,dataST* myblock);
 void HasReq(int refd,dataST* myblock);
 void AllMof(int refd,dataST* myblock);
@@ -150,7 +150,7 @@ int doit(int refd){
     rainmod=(RainMod)(int)receivedata.mod;
     switch(rainmod){
         case Rain_Login :
-            rogin(refd,&receivedata);
+            login(refd,&receivedata);
             printf("Login\n");
             break;
         case Rain_xmlReq :
@@ -207,7 +207,7 @@ void receiveData(int refd,dataST* myblock){
 }
 
 
-void rogin(int refd,dataST* myblock){
+void login(int refd,dataST* myblock){
     const int padsize=15;
     char *filename= malloc(myblock->IDLength+padsize);
     struct stat st;
