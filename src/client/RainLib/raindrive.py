@@ -87,7 +87,8 @@ class RainDrive(object):
         print 'sync invoked'
         if not self.check_hash(): #hash is different->get new xml
             print 'hash fail'
-            self.acquire_lock()
+            while not self.acquire_lock():
+                time.sleep(3)
             latest_xml = self.request_metafile()
             latest_mfa = RainMetaFileAdapter()
             latest_mfa.set_metafile_from_string(latest_xml)
