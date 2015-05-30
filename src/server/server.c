@@ -39,7 +39,7 @@ void xmlReq(int refd,dataST* myblock);
 void HasReq(int refd,dataST* myblock);
 void AllMof(int refd,dataST* myblock);
 void xmlUpl(int refd,dataST* myblock);
-void createDefualtXML(dataST* myblock); // unmaked
+void createDefaultXML(dataST* myblock); // unmaked
 
 unsigned int calculateXMLHash(char* userID); //calcualte and save it
 void xmlSnd(int refd,dataST* myblock);
@@ -213,7 +213,7 @@ void login(int refd,dataST* myblock){
     struct stat st;
     snprintf(filename,myblock->IDLength+padsize,"%sxml/%s.xml",ITEMPATH,myblock->userID);
     if(stat(filename,&st)!=0){
-        createDefualtXML(myblock);
+        createDefaultXML(myblock);
         calculateXMLHash((char *)myblock->userID);	
     }
 
@@ -361,7 +361,7 @@ void xmlUpl(int refd,dataST* myblock){
 
 
 
-void createDefualtXML(dataST* myblock){
+void createDefaultXML(dataST* myblock){
     const int padsize=15;
     char *filename= malloc(myblock->IDLength+padsize);
 
