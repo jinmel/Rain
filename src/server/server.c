@@ -78,7 +78,7 @@ int main(int argc,char **argv)
     }
 
 
-    myaddr.sin_addr.s_addr=inet_addr("127.0.0.1");
+    myaddr.sin_addr.s_addr=inet_addr("0.0.0.0");
     if(sockid==-1)
     {
         perror("socket");
