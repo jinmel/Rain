@@ -54,7 +54,7 @@ int main(int argc,char **argv)
     memset(&myaddr,'0',sizeof(myaddr));
     myaddr.sin_family=AF_INET;
     if(argc==1){
-     myaddr.sin_port=htons(8888);
+     myaddr.sin_port=htons(1287);
      printf("sock 8888\n");
     }
     else{ 
@@ -74,8 +74,8 @@ int main(int argc,char **argv)
 
             
     int len=sizeof(myaddr);
-    int yse=1;
-    if ( setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 )
+    int yes=1;
+    if ( setsockopt(sockid, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 )
     {
     perror("setsockopt");
     }
@@ -129,8 +129,8 @@ int doit(int refd){
    printf("receviedData\n");
    
     write(1,receivedata,6);
-    write(1,receivedata.userID,IDLength);
-    write(1,receivedata.data,DataLength);
+    write(1,receivedata.userID,receivedata.IDLength);
+    write(1,receivedata.data,receivedata.DataLength);
  
    rainmod=(RainMod)(int)receivedata.mod;
    switch(rainmod){
@@ -304,11 +304,13 @@ void AllMof(int refd,dataST* myblock){
 	FILE * infile=fopen(filename,"wb");
 	fclose(infile);
 	sendHeader(refd,myblock,0x83,3);
-	send(refd,"YES\n",4,0);
+	send(refd,"YES\n",4,0); 
+    printf("Yes\n");
 	}
  else {
    sendHeader(refd,myblock,0x83,2);
    send(refd,"NO\n",3,0);
+   printf("no\n");
  }
  free(filename);
 }
