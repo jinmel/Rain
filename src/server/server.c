@@ -54,8 +54,11 @@ int main(int argc,char **argv)
     struct stat st;
 
     if(stat("lock",&st)!=0) system("mkdir lock");
-    if(stat("lock",&st)!=0) system("mkdir xml");
-    if(stat("lock",&st)!=0) system("mkdir hash");
+    if(stat("xml",&st)!=0) system("mkdir xml");
+    if(stat("hash",&st)!=0) system("mkdir hash");
+
+    if(stat("./lock/d.lock",&st)!=0) printf("1");
+    if(stat("./lock/e.lock",&st)!=0) printf("2");
 
 
 
@@ -221,7 +224,7 @@ unsigned int calculateXMLHash(char* userID){
     const int padsize=15;
     unsigned char c[MD5_DIGEST_LENGTH];
     char *filename= malloc(strlen(userID)+padsize);
-    snprintf(filename,strlen(userID),"%sxml/%s.xml",ITEMPATH,userID);
+    snprintf(filename,strlen(userID)+padsize,"%sxml/%s.xml",ITEMPATH,userID);
     FILE *inFile = fopen (filename, "rb");
     MD5_CTX mdContext;
     unsigned char data[1024];
@@ -238,7 +241,7 @@ unsigned int calculateXMLHash(char* userID){
     MD5_Final (c,&mdContext); 
     fclose (inFile);
 
-    snprintf(filename,strlen(userID),"%shash/%s.hash",ITEMPATH,userID);
+    snprintf(filename,strlen(userID)+padsize,"%shash/%s.hash",ITEMPATH,userID);
 
     inFile = fopen (filename, "wb");
     for(i = 0; i < MD5_DIGEST_LENGTH; i++) fprintf(inFile,"%02x", c[i]);
@@ -255,7 +258,7 @@ void xmlSnd(int refd,dataST* myblock){
     const int padsize=15;
     int pos,end;
     char *filename= malloc(myblock->IDLength+padsize);
-    snprintf(filename,myblock->IDLength,"%sxml/%s.xml",ITEMPATH,myblock->userID);
+    snprintf(filename,myblock->IDLength+padsize,"%sxml/%s.xml",ITEMPATH,myblock->userID);
     FILE *inFile = fopen (filename, "rb");
     pos = ftell (inFile);
     fseek (inFile, 0, SEEK_END);
@@ -286,7 +289,7 @@ void HasReq(int refd,dataST* myblock){
     const int padsize=15;
     int pos,end;
     char *filename= malloc(myblock->IDLength+padsize);
-    snprintf(filename,myblock->IDLength,"%shash/%s.hash",ITEMPATH,myblock->userID);
+    snprintf(filename,myblock->IDLength+padsize,"%shash/%s.hash",ITEMPATH,myblock->userID);
     FILE *inFile = fopen (filename, "rb");
     pos = ftell (inFile);
     fseek (inFile, 0, SEEK_END);
@@ -309,8 +312,8 @@ void AllMof(int refd,dataST* myblock){
     const int padsize=15;
     char *filename= malloc(myblock->IDLength+padsize);
     struct stat st;
-    snprintf(filename,myblock->IDLength+padsize,"%slock/%s.lock",ITEMPATH,myblock->userID);
-
+    snprintf(filename,myblock->IDLength+padsize+padsize,"%slock/%s.lock",ITEMPATH,myblock->userID);
+    printf("%s\n",filename);
     if(stat(filename,&st)!=0){
         FILE * infile=fopen(filename,"wb");
         fclose(infile);
@@ -319,6 +322,7 @@ void AllMof(int refd,dataST* myblock){
         printf("Yes\n");
     }
     else {
+        printf("stat: %d",stat(filename,&st));
         sendHeader(refd,myblock,0x83,2);
         send(refd,"NO\n",3,0);
         printf("no\n");
@@ -330,7 +334,7 @@ void xmlUpl(int refd,dataST* myblock){
     const int padsize=15;
     char *filename= malloc(myblock->IDLength+padsize);
 
-    snprintf(filename,myblock->IDLength,"%sxml/%s.xml",ITEMPATH,myblock->userID);
+    snprintf(filename,myblock->IDLength+padsize,"%sxml/%s.xml",ITEMPATH,myblock->userID);
     FILE *inFile = fopen (filename, "wb");
 
     fwrite(myblock->data,1,myblock->DataLength,inFile);
@@ -339,7 +343,7 @@ void xmlUpl(int refd,dataST* myblock){
 
     calculateXMLHash(myblock->userID);
 
-    snprintf(filename,myblock->IDLength,"%slock/%s.lock",ITEMPATH,myblock->userID);
+    snprintf(filename,myblock->IDLength+padsize,"%slock/%s.lock",ITEMPATH,myblock->userID);
     unlink (*filename);
     free(filename);
 
@@ -364,7 +368,7 @@ void createDefualtXML(dataST* myblock){
     const int padsize=15;
     char *filename= malloc(myblock->IDLength+padsize);
 
-    snprintf(filename,myblock->IDLength,"%sxml/%s.xml",ITEMPATH,myblock->userID);
+    snprintf(filename,myblock->IDLength+padsize,"%sxml/%s.xml",ITEMPATH,myblock->userID);
     FILE *inFile = fopen (filename, "wb");
 
     fprintf(inFile,"<Rain><username>%s</username></Rain>",myblock->userID);
