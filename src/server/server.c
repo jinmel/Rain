@@ -44,14 +44,13 @@ void createDefaultXML(dataST* myblock); // unmaked
 unsigned int calculateXMLHash(char* userID); //calcualte and save it
 void xmlSnd(int refd,dataST* myblock);
 void DataPacker(int refd,dataST* myblock,int mod,int dataSize,void * data);
-void sendHeader(int refd,dataST* myblock,int mod,int dataSize);
 
 int main(int argc,char **argv)
 {
 
     struct sockaddr_in myaddr ,clientaddr;
     int sockid,newsockid;
-
+    int port=1287;
     struct stat st;
 
     if(stat("./lock",&st)!=0) system("mkdir lock");
@@ -66,16 +65,12 @@ int main(int argc,char **argv)
     sockid=socket(AF_INET,SOCK_STREAM,0);
     memset(&myaddr,'0',sizeof(myaddr));
     myaddr.sin_family=AF_INET;
-    if(argc==1){
-        myaddr.sin_port=htons(1287);
-        printf("sock 8888\n");
-    }
-    else{ 
-        myaddr.sin_port=htons(atoi(argv[1]));
-        printf("sock %d\n",atoi(argv[1]));
+    if(argc!=1){
+        port=htons(atoi(argv[1]));
     }
 
 
+    myaddr.sin_port=htons(port);
     myaddr.sin_addr.s_addr=INADDR_ANY;
     if(sockid==-1)
     {
@@ -273,7 +268,6 @@ void xmlSnd(int refd,dataST* myblock){
         if(bytes<=0) break;
         else nbytes+=bytes;
     }
-    printf("%s",file_data);
     DataPacker(refd,myblock,mod,end,file_data);
 
     free(file_data);
@@ -304,7 +298,6 @@ void HasReq(int refd,dataST* myblock){
     
     nbytes=0;
     while ( (nbytes += fread(file_data+nbytes,sizeof(char),  CHUNK_SIZE,inFile)!=end) );
-    printf("%s",file_data);
     DataPacker(refd,myblock,mod,end,file_data);
 
     fclose(inFile);
@@ -318,18 +311,16 @@ void AllMof(int refd,dataST* myblock){
     char *filename= malloc(myblock->IDLength+padsize);
     struct stat st;
     snprintf(filename,myblock->IDLength+padsize+padsize,"%slock/%s.lock",ITEMPATH,myblock->userID);
-    printf("%s\n",filename);
+    printf("lock to :%s\n",filename);
     if(stat(filename,&st)!=0){
         FILE * infile=fopen(filename,"wb");
         fclose(infile);
         DataPacker(refd,myblock,0x83,3,"YES");
-        printf("Yes\n");
     }
     else {
         printf("stat: %d",stat(filename,&st));
       
         DataPacker(refd,myblock,0x83,2,"NO");
-        printf("no\n");
     }
     free(filename);
 }
@@ -375,28 +366,46 @@ void DataPacker(int refd,dataST* myblock,int mod,int dataSize,void * data){
     int sendpa=0;
     int tosend=myblock->Dataoffset+dataSize;
     char * Mydata= (char *)malloc(tosend) ;   
+    char * pstring;
     myblock->mod=mod;
     myblock->DataLength=dataSize;
     memcpy(Mydata,myblock,6);
     memcpy(Mydata+6,myblock->userID,myblock->Dataoffset-6);
     memcpy(Mydata+myblock->Dataoffset,data,myblock->DataLength);
-    while(sendpa<tosend)
-        sendpa+=send(refd,Mydata+sendpa,tosend-sendpa,0);
-    free(Mydata);
-}
+/* 
+typedef enum {
+    Rain_Login=0x00,
+    Rain_xmlReq=0x01,
+    Rain_HasReq=0x02,
+    Rain_AllMof=0x03,
+    Rain_xmlUpl=0x04,
+    Rain_xmlSnd=0x81,
+    Rain_HasSnd=0x82,
+    Rain_ModRep=0x83,
+    Rain_UnLcok=0x84
+} RainMod; 
+*/
+    switch(mod){
+    case 0x81:
+        pstring="XML_SND";
+        break;
+    case 0x82:
+        pstring="HASH SND";
+        break;
+    case 0x83:
+        pstring="MODIFY RESPONS";
+        break;
+    case 0x84:
+        pstring="UNLOCK";
+        break;
+    }    
 
-void sendHeader(int refd,dataST* myblock,int mod,int dataSize){
-    int sendpa=0;
-    int tosend=myblock->Dataoffset;
-    char * Mydata= (char *)malloc(tosend) ;   
-    myblock->mod=mod;
-    myblock->DataLength=dataSize;
-    memcpy(Mydata,myblock,6);
-    memcpy(Mydata+6,myblock->userID,myblock->Dataoffset-6);
+    printf("SEND '%s Messege' \nData:\n %s\n",pstring,(char *)data);
     
     while(sendpa<tosend)
         sendpa+=send(refd,Mydata+sendpa,tosend-sendpa,0);
     free(Mydata);
+    
 }
 
 
