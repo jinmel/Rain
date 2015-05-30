@@ -49,8 +49,8 @@ class GoogleDrive(clouddrive.CloudDrive):
             return -1
         else:
             file_new = self.drive.CreateFile({'id': fid})
-            file_new.GetContentFile(filename)
-            return 1
+            content = file_new.GetContentString()
+            return content
 
     def write(self, filename, data):
         dirname_s = filename.split("/")
