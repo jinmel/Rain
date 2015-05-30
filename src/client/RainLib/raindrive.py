@@ -19,23 +19,28 @@ class RainDrive(object):
     def __init__(self, metafile_adapter):
         self.clouds = []
         self.mfa = metafile_adapter
-        cloud_names = self.mfa.get_all_cloud_name()
-        for cloud_name in cloud_names:
-            if cloud_name == DropBox.name:
-                self.add_cloud(DropBox(self.mfa.get_cloud_access_token(cloud_name)))
-            elif cloud_name == GoogleDrive.name:
-                self.add_cloud(GoogleDrive(self.mfa.get_cloud_access_token(cloud_name)))
-            elif cloud_name == Box.name:
-                self.add_cloud(Box(self.mfa.get_cloud_access_token(cloud_name)))
-            else:
-                raise Exception('Unknown cloud service name: ' + cloud_name)
         username = self.mfa.get_username()
         self.packet_builder = RainPacketBuilder(username)
+        self.load_cloud()
 
     def add_cloud(self, cloud):
         self.clouds.append(cloud)
         # sort by descending disk capacity
         self.clouds.sort(key=lambda disk: disk.capacity(), reverse=True)
+
+    def load_cloud(self):
+        cloud_names = self.mfa.get_all_cloud_name()
+        loaded_cloud_names = [cloud.name for cloud in self.clouds]
+        for cloud_name in cloud_names:
+            if cloud_name not in loaded_cloud_names:
+                if cloud_name == DropBox.name:
+                    self.add_cloud(DropBox(self.mfa.get_cloud_access_token(cloud_name)))
+                elif cloud_name == GoogleDrive.name:
+                    self.add_cloud(GoogleDrive(self.mfa.get_cloud_access_token(cloud_name)))
+                elif cloud_name == Box.name:
+                    self.add_cloud(Box(self.mfa.get_cloud_access_token(cloud_name)))
+                else:
+                    raise Exception('Unknown cloud service name: ' + cloud_name)
 
     def get_cloud_num(self):
         return len(self.clouds)
@@ -91,7 +96,8 @@ class RainDrive(object):
             for latest_cname in latest_cloud_names:
                 if latest_cname not in current_cloud_names:
                     access_token = latest_mfa.get_cloud_access_token(latest_cname)
-                    self.mfa.add_cloud(latest_cname,access_token)
+                    self.mfa.add_cloud(latest_cname, access_token)
+            self.load_cloud()
 
             for cloud_name in latest_cloud_names:
                 cloud = self.get_cloud_by_name(cloud_name)
@@ -105,13 +111,13 @@ class RainDrive(object):
                     f = open(new_local_file, "wb")
                     f.write(data)
                     f.close()
-                    self.mfa.add_file(cloud_name,new_local_file,remote_file_name,str(path.getsize(new_local_file)))
+                    self.mfa.add_file(cloud_name, new_local_file, remote_file_name, str(path.getsize(new_local_file)))
 
                 diff = set(current_file_map.keys()) - set(latest_file_map.keys())
                 delete_local_files = list(diff)
                 for deleted_local_file in delete_local_files:
                     os.unlink(deleted_local_file)
-                    self.mfa.remove_file(cloud_name,delete_local_files)
+                    self.mfa.remove_file(cloud_name, delete_local_files)
                     # no need to request delete to cloud drive because it
                     # already has been deleted by another node
 
