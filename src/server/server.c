@@ -53,10 +53,15 @@ int main(int argc,char **argv)
     sockid=socket(AF_INET,SOCK_STREAM,0);
     memset(&myaddr,'0',sizeof(myaddr));
     myaddr.sin_family=AF_INET;
-    if(argc==1)
+    if(argc==1){
      myaddr.sin_port=htons(8888);
-    else 
+     printf("sock 8888\n");
+    }
+    else{ 
      myaddr.sin_port=htons(atoi(argv[1]));
+     printf("sock %d\n",atoi(argv[1]));
+    }
+    
     
     myaddr.sin_addr.s_addr=inet_addr("127.0.0.1");
     if(sockid==-1)
@@ -64,6 +69,7 @@ int main(int argc,char **argv)
         perror("socket");
     	exit(1);
     }
+    else printf("socket succes\n");
     
     int len=sizeof(myaddr);
     if(bind(sockid,( struct sockaddr*)&myaddr,len)==-1)
@@ -71,29 +77,33 @@ int main(int argc,char **argv)
         perror("bind");
         exit(2);
     }
+    else printf("bind succ\n");
+
     if(listen(sockid,10)==-1)
     {
         perror("listen");
         exit(3);
-    }
+    }else printf("listen succ\n");
+
     int pid,new;
     static int counter=0;
     for(;;)
-    {       a:
+    {       
             new =accept(sockid,(struct sockaddr *)&clientaddr,&len);
-
+            printf("accept succ\n");
             if((pid=fork())==-1)
             {
                 close(new);
                 continue;
             }   
             else if(pid>0)
-	    {
+            {
               close(new);
               continue;
             }   
             else if(pid==0)
             {
+            printf("accept succ\n");
             doit(new); 
             close(new);
             break;
@@ -108,23 +118,29 @@ int doit(int refd){
    RainMod rainmod;
    dataST receivedata;
    receiveData(refd,&receivedata);
+   printf("receviedData\n");
     
    rainmod=(RainMod)(int)receivedata.mod;
    switch(rainmod){
    case Rain_Login :
 	rogin(refd,&receivedata);
+    printf("Login\n");
 	break;
    case Rain_xmlReq :
 	xmlReq(refd,&receivedata);
+    printf("Req\n");
 	break;
    case Rain_HasReq :
 	HasReq(refd,&receivedata);
+    printf("Hreq\n");
 	break;
    case Rain_AllMof :
 	AllMof(refd,&receivedata);
+    printf("MofAllow\n");
 	break;
    case Rain_xmlUpl :
 	xmlUpl(refd,&receivedata);
+    printf("xmlupl\n");
 	break;
   }
 
@@ -276,11 +292,11 @@ void AllMof(int refd,dataST* myblock){
 	FILE * infile=fopen(filename,"wb");
 	fclose(infile);
 	sendHeader(refd,myblock,0x83,3);
-	send(refd,"YES",3,0);
+	send(refd,"YES\n",4,0);
 	}
  else {
    sendHeader(refd,myblock,0x83,2);
-   send(refd,"NO",2,0);
+   send(refd,"NO\n",3,0);
  }
  free(filename);
 }
