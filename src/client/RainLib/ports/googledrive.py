@@ -55,9 +55,11 @@ class GoogleDrive(clouddrive.CloudDrive):
     def write(self, filename, data):
         dirname_s = filename.split("/")
         if len(dirname_s) > 2:
-            fid = self.find_file_id(dirname_s[len(dirname_s) - 2])
+          #print dirname_s[-2]
+            fid = self.find_file_id(dirname_s[-2])
             if fid is None:
-                return self.mkdir_rec(''.join(dirname_s[len(dirname_s) - 2]) + "/")
+              self.mkdir_rec('/'+'/'.join(dirname_s[1:-1]) + "/")
+              fid = self.find_file_id(dirname_s[-2])
         else:
             fid = 'root'
 
@@ -72,16 +74,17 @@ class GoogleDrive(clouddrive.CloudDrive):
         return 1
 
     def mkdir_rec(self, dirname) :
+      #print dirname
       dir_list = dirname.split('/')[1:-1]
 
       dir_rec = '/'
-      print dir_list
+      #print dir_list
       for dir_elem in dir_list:
         fid = self.find_file_id(dir_elem)
         dir_rec = dir_rec + dir_elem + "/"
         if fid is None :
+          print dir_rec
           self.mkdir(dir_rec)
-
 #        self.mkdir(dir_elem)
 
 #      dirname_s = dirname.split("/")
@@ -95,9 +98,8 @@ class GoogleDrive(clouddrive.CloudDrive):
 
 
     def mkdir(self, dirname):
-        if dirname[-1] != "/" :
-          dirname = dirname + "/"
         dirname_s = dirname.split("/")
+       # print dirname_s
         if len(dirname_s) > 3:
             fid = self.find_file_id(dirname_s[len(dirname_s) - 3])
             if fid is None:
@@ -165,7 +167,6 @@ class GoogleDrive(clouddrive.CloudDrive):
                 return f['id']
 
             if f['mimeType'] == 'application/vnd.google-apps.folder':
-                print "hi!"
                 fid = self.ListFolder(f['id'], filename)
                 if fid is not None :
                   return fid
