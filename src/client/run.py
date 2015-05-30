@@ -8,6 +8,7 @@ from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 from RainLib.file_event_handler import RainFileSystemEventHandler
 from RainLib.utils import RainMetaFileAdapter
+from RainLib.rainprotocol import RainPacketBuilder
 from RainLib.raindrive import RainDrive
 from threading import Thread
 import logging
@@ -29,12 +30,13 @@ def sync_thread(*args):
 if __name__ == "__main__":
     if not os.path.exists("./metafile.xml"):
         username = raw_input("Enter username:")
-        mfdata = DEFAULT_METAFILE.replace("#username", username)
-        mf = open("./metafile.xml")
-        mf.write(mfdata)
+        pb = RainPacketBuilder(username)
+        data = pb.login()
+        xml_content = pb.UnpackData(data)
+        mf = open("./metafile.xml", "wb")
+        mf.write(xml_content)
         mf.close()
 
-    #TODO: Read metafile.xml initialize cloud drive instances
     mfa = RainMetaFileAdapter()
     mfa.set_metafile("metafile.xml")
 

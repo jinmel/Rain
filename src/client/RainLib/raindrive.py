@@ -79,6 +79,7 @@ class RainDrive(object):
         print 'sync invoked'
         if not self.check_hash(): #hash is different->get new xml
             print 'hash fail'
+            self.acquire_lock()
             latest_xml = self.request_metafile()
             latest_mfa = RainMetaFileAdapter()
             latest_mfa.set_metafile_from_string(latest_xml)
@@ -95,17 +96,18 @@ class RainDrive(object):
                     f = open(new_local_file, "wb")
                     f.write(data)
                     f.close()
+                    self.mfa.add_file(cloud_name,new_local_file,remote_file_name,str(path.getsize(new_local_file)))
 
                 diff = set(current_file_map.keys()) - set(latest_file_map.keys())
                 delete_local_files = list(diff)
                 for deleted_local_file in delete_local_files:
                     os.unlink(deleted_local_file)
+                    self.mfa.remove_file(cloud_name,delete_local_files)
                     # no need to request delete to cloud drive because it
                     # already has been deleted by another node
 
             #finally, update current mfa to latest mfa
-            self.mfa = latest_mfa
-            self.mfa.dump()
+            self.upload_metafile()
 
     def login(self):
         s = socket(AF_INET, SOCK_STREAM)
