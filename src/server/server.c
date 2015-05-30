@@ -70,8 +70,16 @@ int main(int argc,char **argv)
     	exit(1);
     }
     else printf("socket succes\n");
-    
+   
+
+            
     int len=sizeof(myaddr);
+    int yse=1;
+    if ( setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 )
+    {
+    perror("setsockopt");
+    }
+
     if(bind(sockid,( struct sockaddr*)&myaddr,len)==-1)
     {
         perror("bind");
@@ -119,7 +127,11 @@ int doit(int refd){
    dataST receivedata;
    receiveData(refd,&receivedata);
    printf("receviedData\n");
-    
+   
+    write(1,receivedata,6);
+    write(1,receivedata.userID,IDLength);
+    write(1,receivedata.data,DataLength);
+ 
    rainmod=(RainMod)(int)receivedata.mod;
    switch(rainmod){
    case Rain_Login :
