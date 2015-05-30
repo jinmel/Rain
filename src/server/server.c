@@ -252,9 +252,9 @@ unsigned int calculateXMLHash(char* userID){
 
 
 void xmlSnd(int refd,dataST* myblock){
-    const int CHUNK_SIZE=1024;
     char *file_data;
     size_t nbytes = 0;
+    size_t bytes;
     unsigned char mod = 0x81; 
     const int padsize=15;
     int pos,end;
@@ -270,7 +270,12 @@ void xmlSnd(int refd,dataST* myblock){
 
 
     nbytes=0;
-    while ( (nbytes += fread(file_data+nbytes,sizeof(char),  CHUNK_SIZE,inFile)!=end) );
+    while ( nbytes<end){
+        bytes=fread(file_data+nbytes,sizeof(char), end-nbytes ,inFile);
+        if(bytes<=0) break;
+        else nbytes+=bytes;
+    }
+    printf("%s",file_data);
     DataPacker(refd,myblock,mod,end,file_data);
 
     free(file_data);
@@ -301,6 +306,7 @@ void HasReq(int refd,dataST* myblock){
     
     nbytes=0;
     while ( (nbytes += fread(file_data+nbytes,sizeof(char),  CHUNK_SIZE,inFile)!=end) );
+    printf("%s",file_data);
     DataPacker(refd,myblock,mod,end,file_data);
 
     fclose(inFile);
@@ -389,7 +395,7 @@ void sendHeader(int refd,dataST* myblock,int mod,int dataSize){
     myblock->DataLength=dataSize;
     memcpy(Mydata,myblock,6);
     memcpy(Mydata+6,myblock->userID,myblock->Dataoffset-6);
-
+    
     while(sendpa<tosend)
         sendpa+=send(refd,Mydata+sendpa,tosend-sendpa,0);
     free(Mydata);
