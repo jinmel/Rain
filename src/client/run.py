@@ -9,13 +9,31 @@ from watchdog.events import LoggingEventHandler
 from RainLib.file_event_handler import RainFileSystemEventHandler
 from RainLib.utils import RainMetaFileAdapter
 from RainLib.raindrive import RainDrive
+from threading import Thread
 import logging
 import time
 import os
 
+
 SUPPORTED_CLOUDS = [DropBox.name, GoogleDrive.name, Box.name]
+DEFAULT_METAFILE = "<Rain><username>#username</username></Rain>"
+
+
+def sync_thread(*args):
+    rdrive = args[0]
+    while True:
+        time.sleep(5)
+        rdrive.sync()
+
 
 if __name__ == "__main__":
+    if not os.path.exists("./metafile.xml"):
+        username = raw_input("Enter username:")
+        mfdata = DEFAULT_METAFILE.replace("#username", username)
+        mf = open("./metafile.xml")
+        mf.write(mfdata)
+        mf.close()
+
     #TODO: Read metafile.xml initialize cloud drive instances
     mfa = RainMetaFileAdapter()
     mfa.set_metafile("metafile.xml")
@@ -53,6 +71,8 @@ if __name__ == "__main__":
         print 'Metafile updated'
     elif choice == 2:
         rdrive = RainDrive(mfa)
+        sync_t = Thread(target=sync_thread, args=(rdrive,))
+        sync_t.start()
         observer = Observer()
         event_handler = RainFileSystemEventHandler(rdrive)
         observer.schedule(event_handler, ".", recursive=True)
@@ -64,6 +84,6 @@ if __name__ == "__main__":
             observer.stop()
         observer.join()
     elif choice == 3:
-      #rdrive = RainDrive(mfa)
+    #rdrive = RainDrive(mfa)
         gdrive = GoogleDrive(mfa.get_cloud_access_token('Google Drive'))
         print "Delete success"
