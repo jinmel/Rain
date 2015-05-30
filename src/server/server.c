@@ -143,7 +143,7 @@ int doit(int refd){
     write(1,receivedata,6);
     write(1,receivedata.userID,receivedata.IDLength);
     write(1,receivedata.data,receivedata.DataLength);
-    printf("receviedData : \"\nmod :");
+    printf("\"\nmod :");
 
     rainmod=(RainMod)(int)receivedata.mod;
     switch(rainmod){
