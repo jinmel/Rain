@@ -116,16 +116,15 @@ class RainDrive(object):
                 new_local_files = list(diff)
                 for new_local_file in new_local_files:
                     remote_file_name = latest_file_map[new_local_file]
-                    print remote_file_name
                     data = cloud.read(remote_file_name)
-                    d = os.path.dirname(path.join(self.watch_dir,new_local_file))
+                    d = os.path.dirname(path.join(self.watch_dir, new_local_file))
                     if not os.path.exists(d):
                         os.makedirs(d)
                     f = open(path.join(self.watch_dir, new_local_file), "wb")
-                    print data
                     f.write(data)
                     f.close()
-                    self.mfa.add_file(cloud_name, new_local_file, remote_file_name, str(path.getsize(path.join(self.watch_dir,new_local_file))))
+                    self.mfa.add_file(cloud_name, new_local_file, remote_file_name,
+                                      str(path.getsize(path.join(self.watch_dir, new_local_file))))
 
                 diff = set(current_file_map.keys()) - set(latest_file_map.keys())
                 delete_local_files = list(diff)
@@ -138,6 +137,7 @@ class RainDrive(object):
             #finally, update current mfa to latest mfa
             self.upload_metafile()
             self.lock = 0
+        print 'sync_end'
 
     def login(self):
         s = socket(AF_INET, SOCK_STREAM)

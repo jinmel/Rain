@@ -30,7 +30,6 @@ class RainPacketBuilder(object):
 
     def UnpackData(self, pack):
         fmt1 = "<BBHH"
-        print 'pack:',repr(pack)
         (mod, userid_len, data_offset, data_len) = struct.unpack(fmt1, pack[:6])
         fmt2 = "<BBHH%ds%ds" % (userid_len, data_len)
         (mod, userid_len, data_offset, data_len, userid, data) = struct.unpack(fmt2, pack)

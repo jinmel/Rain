@@ -34,6 +34,11 @@ class RainMetaFileAdapter(object):
         self.root.remove(self._get_cloud_elem(cloud_name))
 
     def add_file(self, cloud_name, local_filename, remote_filename, file_size):
+        cloud_elem = self._get_cloud_elem(cloud_name)
+        f = cloud_elem.find("./file[local_filename='" + local_filename + "']")
+        if f is not None:
+            cloud_elem.remove(f)
+
         file = ET.Element('file')
         file.attrib = {"cloud": cloud_name}
         ET.SubElement(file, 'local_filename').text = local_filename
