@@ -140,23 +140,23 @@ int doit(int refd){
     rainmod=(RainMod)(int)receivedata.mod;
     switch(rainmod){
         case Rain_Login :
-            printf("Login:\n");
+            printf("Login:\n\n");
             login(refd,&receivedata);
             break;
         case Rain_xmlReq :
-            printf("XMLReq:\n");
+            printf("XMLReq:\n\n");
             xmlReq(refd,&receivedata);
             break;
         case Rain_HasReq : 
-            printf("HASHreq:\n");
+            printf("HASHreq:\n\n");
              HasReq(refd,&receivedata);
             break;
         case Rain_AllMof : 
-            printf("MofAllow:\n");
+            printf("MofAllow:\n\n");
             AllMof(refd,&receivedata);
             break;
         case Rain_xmlUpl : 
-            printf("XMLupl:\n");
+            printf("XMLupl:\n\n");
             xmlUpl(refd,&receivedata);
             break;
     }
@@ -385,7 +385,7 @@ void DataPacker(int refd,dataST* myblock,int mod,int dataSize,void * data){
         break;
     }    
 
-    printf("SEND '%s Messege' \nData > \n %s\n",pstring,(char *)data);
+    printf("SEND '%s Messege' \nData > \n %s\n\n",pstring,(char *)data);
     
     while(sendpa<tosend)
         sendpa+=send(refd,Mydata+sendpa,tosend-sendpa,0);
