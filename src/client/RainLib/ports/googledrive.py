@@ -44,7 +44,11 @@ class GoogleDrive(clouddrive.CloudDrive):
 
     #        self.drive = GoogleDrive(gauth)
     def read(self, filename):
-        fid = self.find_file_id(filename)
+        dirname_s = filename.split("/")
+        if len(dirname_s) > 2:
+          fid = self.find_file_id(dirname_s[-1])
+        else :
+          fid = self.find_file_id(filename)
         if fid is None:
             return -1
         else:
