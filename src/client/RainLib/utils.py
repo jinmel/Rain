@@ -13,7 +13,7 @@ class RainMetaFileAdapter(object):
         self.metafile.write(META_FILE_NAME)
 
     def set_metafile_from_string(self, metafile_content):
-        self.metafile = ET.XML(metafile_content)
+        self.metafile = ET.ElementTree(ET.XML(metafile_content))
         self.root = self.metafile.getroot()
 
     def set_metafile(self, filename):

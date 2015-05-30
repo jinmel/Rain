@@ -76,7 +76,9 @@ class RainDrive(object):
         self.upload_metafile()
 
     def sync(self):
+        print 'sync invoked'
         if not self.check_hash(): #hash is different->get new xml
+            print 'hash fail'
             latest_xml = self.request_metafile()
             latest_mfa = RainMetaFileAdapter()
             latest_mfa.set_metafile_from_string(latest_xml)
@@ -90,7 +92,7 @@ class RainDrive(object):
                 for new_local_file in new_local_files:
                     remote_file_name = latest_file_map[new_local_file]
                     data = cloud.read(latest_file_map[new_local_file])
-                    f = open(new_local_file,"wb")
+                    f = open(new_local_file, "wb")
                     f.write(data)
                     f.close()
 
@@ -113,7 +115,8 @@ class RainDrive(object):
             print ("don't reach (%s:%s)" % RAIN_ADDR)
 
         s.send(self.packet_builder.login())
-        xml_content = self.recv_timeout(s)
+        data = self.recv_timeout(s)
+        xml_content = self.packet_builder.UnpackData(data)[2]
         s.close()
         self.mfa.set_metafile_from_string(xml_content)
 
@@ -122,7 +125,8 @@ class RainDrive(object):
         s = socket(AF_INET, SOCK_STREAM)
         s.connect(RAIN_ADDR)
         s.send(hashreq)
-        hash_value = s.recv(1024)
+        data = self.recv_timeout(s)
+        hash_value = self.packet_builder.UnpackData(data)[2]
         s.close()
         metafile_data = self.mfa.get_raw_xml()
         metafile_hash = md5(metafile_data).hexdigest()
@@ -133,7 +137,9 @@ class RainDrive(object):
         s = socket(AF_INET, SOCK_STREAM)
         s.connect(RAIN_ADDR)
         s.send(self.packet_builder.xml_request())
-        xml_content = self.recv_timeout(s)
+        data = self.recv_timeout(s)
+        print data
+        xml_content = self.packet_builder.UnpackData(data)[2]
         s.close()
         return xml_content
 
@@ -142,13 +148,16 @@ class RainDrive(object):
         s = socket(AF_INET, SOCK_STREAM)
         s.connect(RAIN_ADDR)
         s.send(self.packet_builder.xml_lock())
-        lock = s.recv(100)
+        data = self.recv_timeout(s)
+        print repr(data)
+        lock = self.packet_builder.UnpackData(data)[2]
+        print lock
         s.close()
         return lock == "YES"
 
     def upload_metafile(self):
         print "uploading metafile.."
-        s = socket(AF_INET,SOCK_STREAM)
+        s = socket(AF_INET, SOCK_STREAM)
         s.connect(RAIN_ADDR)
         current_xml_content = self.mfa.get_raw_xml()
         s.send(self.packet_builder.xml_upload(current_xml_content))
