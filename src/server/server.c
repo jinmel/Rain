@@ -43,7 +43,8 @@ void createDefualtXML(dataST* myblock); // unmaked
 
 unsigned int calculateXMLHash(char* userID); //calcualte and save it
 void xmlSnd(int refd,dataST* myblock);
-void sendHeader(int refd,dataST* myblock,int mod,int dataSize); //include userid
+void DataPacker(int refd,dataST* myblock,int mod,int dataSize,void * data);
+void sendHeader(int refd,dataST* myblock,int mod,int dataSize);
 
 int main(int argc,char **argv)
 {
@@ -267,6 +268,8 @@ void xmlSnd(int refd,dataST* myblock){
 
     sendHeader(refd,myblock,mod,end);
 
+    DataPacker(refd,myblock,mod,end,0);
+
     while ( (nbytes = fread(file_data,sizeof(char),  CHUNK_SIZE,inFile)) > 0)
     {
         send(refd, file_data, nbytes, 0);
@@ -295,13 +298,11 @@ void HasReq(int refd,dataST* myblock){
     fseek (inFile, 0, SEEK_END);
     end = ftell (inFile);
     fseek (inFile, pos, SEEK_SET);
+    
+    nbytes=0;
+    while ( (nbytes += fread(file_data+nbytes,sizeof(char),  CHUNK_SIZE,inFile)!=end) );
+    DataPacker(refd,myblock,mod,end,file_data);
 
-    sendHeader(refd,myblock,mod,end);
-
-    while ( (nbytes = fread(file_data,sizeof(char),  CHUNK_SIZE,inFile)) > 0)
-    {
-        send(refd, file_data, nbytes, 0);
-    }
     fclose(inFile);
     free(filename);
 
@@ -317,14 +318,13 @@ void AllMof(int refd,dataST* myblock){
     if(stat(filename,&st)!=0){
         FILE * infile=fopen(filename,"wb");
         fclose(infile);
-        sendHeader(refd,myblock,0x83,3);
-        send(refd,"YES\n",4,0); 
+        DataPacker(refd,myblock,0x83,3,"YES");
         printf("Yes\n");
     }
     else {
         printf("stat: %d",stat(filename,&st));
-        sendHeader(refd,myblock,0x83,2);
-        send(refd,"NO\n",3,0);
+      
+        DataPacker(refd,myblock,0x83,2,"NO");
         printf("no\n");
     }
     free(filename);
@@ -347,20 +347,11 @@ void xmlUpl(int refd,dataST* myblock){
     unlink (*filename);
     free(filename);
 
-    sendHeader(refd,myblock,0x84,0);
+    
+    DataPacker(refd,myblock,0x84,0,"");
 }
 
 
-
-void sendHeader(int refd,dataST* myblock,int mod,int dataSize){
-    send(refd,&mod,1,0);
-    send(refd,&myblock->IDLength,1,0);
-    send(refd,&myblock->Dataoffset,2,0);
-    send(refd,&dataSize,2,0);
-
-    send(refd,&myblock->userID,myblock->Dataoffset-6,0);
-
-}
 
 
 
@@ -374,6 +365,31 @@ void createDefualtXML(dataST* myblock){
     fprintf(inFile,"<Rain><username>%s</username></Rain>",myblock->userID);
     fclose(inFile);
 
+}
+
+void DataPacker(int refd,dataST* myblock,int mod,int dataSize,void * data){
+    int sendpa=0;
+    int tosend=myblock->Dataoffset+dataSize;
+    char * Mydata= (char *)malloc(tosend) ;   
+    myblock->DataLength=dataSize;
+    memcpy(Mydata,myblock,4);
+    memcpy(Mydata+6,myblock->userID,myblock->Dataoffset-6);
+    memcpy(Mydata+myblock->Dataoffset,data,myblock->DataLength);
+    while(sendpa<tosend)
+        sendpa+=send(refd,Mydata+sendpa,tosend-sendpa,0);
+    free(Mydata);
+}
+
+void sendHeader(int refd,dataST* myblock,int mod,int dataSize){
+    int sendpa=0;
+    int tosend=myblock->Dataoffset;
+    char * Mydata= (char *)malloc(tosend) ;   
+    myblock->DataLength=dataSize;
+    memcpy(Mydata,myblock,4);
+    memcpy(Mydata+6,myblock->userID,myblock->Dataoffset-6);
+    while(sendpa<tosend)
+        sendpa+=send(refd,Mydata+sendpa,tosend-sendpa,0);
+    free(Mydata);
 }
 
 
