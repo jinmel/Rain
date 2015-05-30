@@ -344,7 +344,7 @@ void xmlUpl(int refd,dataST* myblock){
     calculateXMLHash(myblock->userID);
 
     snprintf(filename,myblock->IDLength+padsize,"%slock/%s.lock",ITEMPATH,myblock->userID);
-    unlink (*filename);
+    unlink (filename);
     free(filename);
 
     
