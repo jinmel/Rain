@@ -109,6 +109,9 @@ class RainDrive(object):
                 for new_local_file in new_local_files:
                     remote_file_name = latest_file_map[new_local_file]
                     data = cloud.read(latest_file_map[new_local_file])
+                    d = os.path.dirname(new_local_file)
+                    if not os.path.exists(d):
+                        os.makedirs(d)
                     f = open(new_local_file, "wb")
                     f.write(data)
                     f.close()
