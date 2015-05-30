@@ -253,7 +253,7 @@ unsigned int calculateXMLHash(char* userID){
 
 void xmlSnd(int refd,dataST* myblock){
     const int CHUNK_SIZE=1024;
-    char file_data[CHUNK_SIZE];
+    char *file_data;
     size_t nbytes = 0;
     unsigned char mod = 0x81; 
     const int padsize=15;
@@ -266,14 +266,14 @@ void xmlSnd(int refd,dataST* myblock){
     end = ftell (inFile);
     fseek (inFile, pos, SEEK_SET);
 
-    sendHeader(refd,myblock,mod,end);
+    file_data=malloc(end);
 
-    DataPacker(refd,myblock,mod,end,0);
 
-    while ( (nbytes = fread(file_data,sizeof(char),  CHUNK_SIZE,inFile)) > 0)
-    {
-        send(refd, file_data, nbytes, 0);
-    }
+    nbytes=0;
+    while ( (nbytes += fread(file_data+nbytes,sizeof(char),  CHUNK_SIZE,inFile)!=end) );
+    DataPacker(refd,myblock,mod,end,file_data);
+
+    free(file_data);
     fclose(inFile);
     free(filename);
 }
