@@ -40,7 +40,10 @@ if __name__ == "__main__":
     mfa = RainMetaFileAdapter()
     mfa.set_metafile("./metafile.xml")
     rdrive = RainDrive(mfa)
+    print mfa.get_all_cloud_name()
+    print rdrive.get_cloud_num()
     rdrive.login()
+    rdrive.sync()
 
     print "=== Rain - Cloud Unification ==="
     print "1. Add Cloud Drives"
@@ -74,6 +77,8 @@ if __name__ == "__main__":
         mfa.dump()
         print 'Metafile updated'
     elif choice == 2:
+        if rdrive.get_cloud_num() == 0:
+            raise Exception('No cloud registered')
         sync_t = Thread(target=sync_thread, args=(rdrive,))
         sync_t.start()
         observer = Observer()
@@ -87,6 +92,5 @@ if __name__ == "__main__":
             observer.stop()
         observer.join()
     elif choice == 3:
-    #rdrive = RainDrive(mfa)
         gdrive = GoogleDrive(mfa.get_cloud_access_token('Google Drive'))
         print "Delete success"

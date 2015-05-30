@@ -10,7 +10,7 @@ from socket import *
 from hashlib import md5
 
 RAIN_REMOTE_PATH = '/Rain'
-RAIN_HOST = "plus7.postech.ac.kr"
+RAIN_HOST = "plus.or.kr"
 RAIN_PORT = 1287
 RAIN_ADDR = (RAIN_HOST, RAIN_PORT)
 
@@ -36,6 +36,9 @@ class RainDrive(object):
         self.clouds.append(cloud)
         # sort by descending disk capacity
         self.clouds.sort(key=lambda disk: disk.capacity(), reverse=True)
+
+    def get_cloud_num(self):
+        return len(self.clouds)
 
     def get_cloud_by_name(self, cloud_name):
         for d in self.clouds:
@@ -84,6 +87,12 @@ class RainDrive(object):
             latest_mfa = RainMetaFileAdapter()
             latest_mfa.set_metafile_from_string(latest_xml)
             latest_cloud_names = latest_mfa.get_all_cloud_name()
+            current_cloud_names = self.mfa.get_all_cloud_name()
+            for latest_cname in latest_cloud_names:
+                if latest_cname not in current_cloud_names:
+                    access_token = latest_mfa.get_cloud_access_token(latest_cname)
+                    self.mfa.add_cloud(latest_cname,access_token)
+
             for cloud_name in latest_cloud_names:
                 cloud = self.get_cloud_by_name(cloud_name)
                 latest_file_map = latest_mfa.get_file_map(cloud_name)
@@ -116,7 +125,6 @@ class RainDrive(object):
         data = self.recv_timeout(s)
         xml_content = self.packet_builder.UnpackData(data)[2]
         s.close()
-        self.mfa.set_metafile_from_string(xml_content)
 
     def check_hash(self):
         hashreq = self.packet_builder.hash_request()
