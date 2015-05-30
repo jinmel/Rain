@@ -23,6 +23,7 @@ class RainDrive(object):
         username = self.mfa.get_username()
         self.packet_builder = RainPacketBuilder(username)
         self.load_cloud()
+        self.lock = 0
 
     def add_cloud(self, cloud):
         self.clouds.append(cloud)
@@ -45,6 +46,9 @@ class RainDrive(object):
 
     def get_cloud_num(self):
         return len(self.clouds)
+
+    def is_locked(self):
+        return self.lock == 1
 
     def get_cloud_by_name(self, cloud_name):
         for d in self.clouds:
@@ -89,8 +93,10 @@ class RainDrive(object):
         print 'sync invoked'
         if not self.check_hash(): #hash is different->get new xml
             print 'hash fail'
+            self.lock = 1
             while not self.acquire_lock():
                 time.sleep(3)
+
             latest_xml = self.request_metafile()
             latest_mfa = RainMetaFileAdapter()
             latest_mfa.set_metafile_from_string(latest_xml)
@@ -131,6 +137,7 @@ class RainDrive(object):
 
             #finally, update current mfa to latest mfa
             self.upload_metafile()
+            self.lock = 0
 
     def login(self):
         s = socket(AF_INET, SOCK_STREAM)
