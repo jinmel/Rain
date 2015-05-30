@@ -124,7 +124,6 @@ int main(int argc,char **argv)
         }   
         else if(pid==0)
         {
-            printf("accept succ\n");
             doit(new); 
             close(new);
             break;
@@ -139,33 +138,34 @@ int doit(int refd){
     RainMod rainmod;
     dataST receivedata;
     receiveData(refd,&receivedata);
-    printf("receviedData\n");
+    printf("receviedData : \n\"");
 
     write(1,receivedata,6);
     write(1,receivedata.userID,receivedata.IDLength);
     write(1,receivedata.data,receivedata.DataLength);
+    printf("receviedData : \"\nmod :");
 
     rainmod=(RainMod)(int)receivedata.mod;
     switch(rainmod){
         case Rain_Login :
-            login(refd,&receivedata);
             printf("Login\n");
+            login(refd,&receivedata);
             break;
         case Rain_xmlReq :
+            printf("XMLReq\n");
             xmlReq(refd,&receivedata);
-            printf("Req\n");
             break;
-        case Rain_HasReq :
-            HasReq(refd,&receivedata);
-            printf("Hreq\n");
+        case Rain_HasReq : 
+            printf("HASHreq\n");
+             HasReq(refd,&receivedata);
             break;
-        case Rain_AllMof :
-            AllMof(refd,&receivedata);
+        case Rain_AllMof : 
             printf("MofAllow\n");
+            AllMof(refd,&receivedata);
             break;
-        case Rain_xmlUpl :
+        case Rain_xmlUpl : 
+            printf("XMLupl\n");
             xmlUpl(refd,&receivedata);
-            printf("xmlupl\n");
             break;
     }
 
