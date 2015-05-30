@@ -11,6 +11,7 @@ from RainLib.utils import RainMetaFileAdapter
 from RainLib.rainprotocol import RainPacketBuilder
 from RainLib.raindrive import RainDrive
 from threading import Thread
+from socket import *
 import logging
 import time
 import os
@@ -29,16 +30,17 @@ def sync_thread(*args):
 
 if __name__ == "__main__":
     if not os.path.exists("./metafile.xml"):
+        # create default metafile.xml
         username = raw_input("Enter username:")
-        pb = RainPacketBuilder(username)
-        data = pb.login()
-        xml_content = pb.UnpackData(data)
-        mf = open("./metafile.xml", "wb")
-        mf.write(xml_content)
-        mf.close()
+        mfdata = DEFAULT_METAFILE.replace("#username",username)
+        f = open("./metafile.xml","wb")
+        f.write(mfdata)
+        f.close()
 
     mfa = RainMetaFileAdapter()
-    mfa.set_metafile("metafile.xml")
+    mfa.set_metafile("./metafile.xml")
+    rdrive = RainDrive(mfa)
+    rdrive.login()
 
     print "=== Rain - Cloud Unification ==="
     print "1. Add Cloud Drives"
@@ -72,7 +74,6 @@ if __name__ == "__main__":
         mfa.dump()
         print 'Metafile updated'
     elif choice == 2:
-        rdrive = RainDrive(mfa)
         sync_t = Thread(target=sync_thread, args=(rdrive,))
         sync_t.start()
         observer = Observer()

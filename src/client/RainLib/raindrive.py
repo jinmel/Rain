@@ -10,7 +10,7 @@ from socket import *
 from hashlib import md5
 
 RAIN_REMOTE_PATH = '/Rain'
-RAIN_HOST = "localhost"
+RAIN_HOST = "plus7.postech.ac.kr"
 RAIN_PORT = 1287
 RAIN_ADDR = (RAIN_HOST, RAIN_PORT)
 
@@ -111,11 +111,7 @@ class RainDrive(object):
 
     def login(self):
         s = socket(AF_INET, SOCK_STREAM)
-        try:
-            s.connect(RAIN_ADDR)
-        except:
-            print ("don't reach (%s:%s)" % RAIN_ADDR)
-
+        s.connect(RAIN_ADDR)
         s.send(self.packet_builder.login())
         data = self.recv_timeout(s)
         xml_content = self.packet_builder.UnpackData(data)[2]
