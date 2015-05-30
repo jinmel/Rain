@@ -17,7 +17,8 @@ SUPPORTED_CLOUDS = [DropBox.name, GoogleDrive.name, Box.name]
 
 if __name__ == "__main__":
     #TODO: Read metafile.xml initialize cloud drive instances
-    mfa = RainMetaFileAdapter('metafile.xml')
+    mfa = RainMetaFileAdapter()
+    mfa.set_metafile("metafile.xml")
 
     print "=== Rain - Cloud Unification ==="
     print "1. Add Cloud Drives"

@@ -5,12 +5,12 @@ META_FILE_NAME = 'metafile.xml'
 
 
 class RainMetaFileAdapter(object):
-    def __init__(self, filename):
-        self.metafile = ET.parse(filename)
-        self.root = self.metafile.getroot()
+    def __init__(self):
+        self.metafile = None
+        self.root = None
 
     def dump(self):
-        self.metafile.dump(META_FILE_NAME)
+        self.metafile.write(META_FILE_NAME)
 
     def set_metafile_from_string(self,metafile_content):
         self.metafile = ET.XML(metafile_content)
@@ -64,7 +64,7 @@ class RainMetaFileAdapter(object):
     def get_cloud_name_by_local_filename(self, filename):
         cloud_name = self.root.find(".//file[local_filename='" + filename + "']/..name")
         if cloud_name is None:
-            raise KeyError()
+            return None
         else:
             return cloud_name.text
 
