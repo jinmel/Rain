@@ -9,8 +9,17 @@ class RainMetaFileAdapter(object):
         self.metafile = ET.parse(filename)
         self.root = self.metafile.getroot()
 
-    def write(self):
-        self.metafile.write(META_FILE_NAME)
+    def dump(self):
+        self.metafile.dump(META_FILE_NAME)
+
+    def set_metafile_from_string(self,metafile_content):
+        self.metafile = ET.XML(metafile_content)
+        self.root = self.metafile.getroot()
+
+    def set_metafile(self,filename):
+        self.metafile = ET.parse(filename)
+        self.root = self.metafile.getroot()
+
 
     # Write operations
 
@@ -87,7 +96,7 @@ class RainMetaFileAdapter(object):
     def get_username(self):
         return self.root.find("./username").text
 
-    def get_raw_xml_file(self):
+    def get_raw_xml(self):
         return ET.tostring(self.root)
 
 

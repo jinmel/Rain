@@ -48,7 +48,7 @@ if __name__ == "__main__":
             access_token = Box.auth()
 
         mfa.add_cloud(menu[choice], access_token)
-        mfa.write()
+        mfa.dump()
         print 'Metafile updated'
     elif choice == 2:
         rdrive = RainDrive(mfa)
@@ -65,7 +65,4 @@ if __name__ == "__main__":
     elif choice == 3:
       #rdrive = RainDrive(mfa)
         gdrive = GoogleDrive(mfa.get_cloud_access_token('Google Drive'))
-        
-        gdrive.write("/Rain/rec1/rec2/rec3/rec4/rec5", "sdfsdf")
         print "Delete success"
-
