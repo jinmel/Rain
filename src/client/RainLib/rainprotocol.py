@@ -9,6 +9,7 @@ def PackData(mod, userid, data):
     return struct.pack(fmt, mod, len(userid), len(userid) + 6, len(data), userid, data)
 
 
+
 class RainPacketBuilder(object):
     def __init__(self, user_id):
         self.user_id = user_id
@@ -28,6 +29,12 @@ class RainPacketBuilder(object):
     def hash_request(self):
         return PackData(0x2, self.user_id, "")
 
+    def UnpackData(self, pack) :
+        fmt1 = "<BBHH"
+        (mod, userid_len, data_offset, data_len) = struct.unpack(fmt1, pack)
+        fmt2 = "<BBHH%ds%ds" % (userid_len, data_len)
+        (mod, userid_len, data_offset, data_len, userid, data) = struct.unpack(fmt2, pack)
+        return (mod, userid, data)
 
 
 
