@@ -54,12 +54,10 @@ int main(int argc,char **argv)
 
     struct stat st;
 
-    if(stat("lock",&st)!=0) system("mkdir lock");
-    if(stat("xml",&st)!=0) system("mkdir xml");
-    if(stat("hash",&st)!=0) system("mkdir hash");
+    if(stat("./lock",&st)!=0) system("mkdir lock");
+    if(stat("./xml",&st)!=0) system("mkdir xml");
+    if(stat("./hash",&st)!=0) system("mkdir hash");
 
-    if(stat("./lock/d.lock",&st)!=0) printf("1");
-    if(stat("./lock/e.lock",&st)!=0) printf("2");
 
 
 
@@ -78,7 +76,7 @@ int main(int argc,char **argv)
     }
 
 
-    myaddr.sin_addr.s_addr=inet_addr("0.0.0.0");
+    myaddr.sin_addr.s_addr=INADDR_ANY;
     if(sockid==-1)
     {
         perror("socket");
