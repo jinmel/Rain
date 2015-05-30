@@ -371,8 +371,9 @@ void DataPacker(int refd,dataST* myblock,int mod,int dataSize,void * data){
     int sendpa=0;
     int tosend=myblock->Dataoffset+dataSize;
     char * Mydata= (char *)malloc(tosend) ;   
+    myblock->mod=mod;
     myblock->DataLength=dataSize;
-    memcpy(Mydata,myblock,4);
+    memcpy(Mydata,myblock,6);
     memcpy(Mydata+6,myblock->userID,myblock->Dataoffset-6);
     memcpy(Mydata+myblock->Dataoffset,data,myblock->DataLength);
     while(sendpa<tosend)
@@ -384,9 +385,11 @@ void sendHeader(int refd,dataST* myblock,int mod,int dataSize){
     int sendpa=0;
     int tosend=myblock->Dataoffset;
     char * Mydata= (char *)malloc(tosend) ;   
+    myblock->mod=mod;
     myblock->DataLength=dataSize;
-    memcpy(Mydata,myblock,4);
+    memcpy(Mydata,myblock,6);
     memcpy(Mydata+6,myblock->userID,myblock->Dataoffset-6);
+
     while(sendpa<tosend)
         sendpa+=send(refd,Mydata+sendpa,tosend-sendpa,0);
     free(Mydata);
