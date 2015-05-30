@@ -133,33 +133,30 @@ int doit(int refd){
     RainMod rainmod;
     dataST receivedata;
     receiveData(refd,&receivedata);
-    printf("receviedData : \n\"");
 
-    write(1,receivedata,6);
-    write(1,receivedata.userID,receivedata.IDLength);
-    write(1,receivedata.data,receivedata.DataLength);
-    printf("\"\nmod :");
+    printf("user '%s' receviedData < n\"%s\"\n",receivedata.userID,receivedata.data);
+    printf("Messege ");
 
     rainmod=(RainMod)(int)receivedata.mod;
     switch(rainmod){
         case Rain_Login :
-            printf("Login\n");
+            printf("Login:\n");
             login(refd,&receivedata);
             break;
         case Rain_xmlReq :
-            printf("XMLReq\n");
+            printf("XMLReq:\n");
             xmlReq(refd,&receivedata);
             break;
         case Rain_HasReq : 
-            printf("HASHreq\n");
+            printf("HASHreq:\n");
              HasReq(refd,&receivedata);
             break;
         case Rain_AllMof : 
-            printf("MofAllow\n");
+            printf("MofAllow:\n");
             AllMof(refd,&receivedata);
             break;
         case Rain_xmlUpl : 
-            printf("XMLupl\n");
+            printf("XMLupl:\n");
             xmlUpl(refd,&receivedata);
             break;
     }
@@ -372,19 +369,7 @@ void DataPacker(int refd,dataST* myblock,int mod,int dataSize,void * data){
     memcpy(Mydata,myblock,6);
     memcpy(Mydata+6,myblock->userID,myblock->Dataoffset-6);
     memcpy(Mydata+myblock->Dataoffset,data,myblock->DataLength);
-/* 
-typedef enum {
-    Rain_Login=0x00,
-    Rain_xmlReq=0x01,
-    Rain_HasReq=0x02,
-    Rain_AllMof=0x03,
-    Rain_xmlUpl=0x04,
-    Rain_xmlSnd=0x81,
-    Rain_HasSnd=0x82,
-    Rain_ModRep=0x83,
-    Rain_UnLcok=0x84
-} RainMod; 
-*/
+
     switch(mod){
     case 0x81:
         pstring="XML_SND";
@@ -400,7 +385,7 @@ typedef enum {
         break;
     }    
 
-    printf("SEND '%s Messege' \nData:\n %s\n",pstring,(char *)data);
+    printf("SEND '%s Messege' \nData > \n %s\n",pstring,(char *)data);
     
     while(sendpa<tosend)
         sendpa+=send(refd,Mydata+sendpa,tosend-sendpa,0);
