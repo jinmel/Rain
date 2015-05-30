@@ -16,9 +16,10 @@ RAIN_ADDR = (RAIN_HOST, RAIN_PORT)
 
 
 class RainDrive(object):
-    def __init__(self, metafile_adapter):
+    def __init__(self, metafile_adapter, watch_dir):
         self.clouds = []
         self.mfa = metafile_adapter
+        self.watch_dir = watch_dir
         username = self.mfa.get_username()
         self.packet_builder = RainPacketBuilder(username)
         self.load_cloud()
@@ -57,12 +58,13 @@ class RainDrive(object):
             time.sleep(3)
 
         cur_cloud = self.clouds[0]  # add file to cloud that has highest capacity
-        f = open(filename, 'rb')
+        f = open(path.join(self.watch_dir, filename), 'rb')
         data = f.read()
         f.close()
         remote_filename = path.join(RAIN_REMOTE_PATH, filename).replace('./', '')
         cur_cloud.write(remote_filename, data)
-        self.mfa.add_file(cur_cloud.name, filename, remote_filename, str(path.getsize(filename)))
+        self.mfa.add_file(cur_cloud.name, filename, remote_filename,
+                          str(path.getsize(path.join(self.watch_dir, filename))))
         self.upload_metafile()
 
     def remove_file(self, filename):
@@ -108,19 +110,21 @@ class RainDrive(object):
                 new_local_files = list(diff)
                 for new_local_file in new_local_files:
                     remote_file_name = latest_file_map[new_local_file]
-                    data = cloud.read(latest_file_map[new_local_file])
-                    d = os.path.dirname(new_local_file)
+                    print remote_file_name
+                    data = cloud.read(remote_file_name)
+                    d = os.path.dirname(path.join(self.watch_dir,new_local_file))
                     if not os.path.exists(d):
                         os.makedirs(d)
-                    f = open(new_local_file, "wb")
+                    f = open(path.join(self.watch_dir, new_local_file), "wb")
+                    print data
                     f.write(data)
                     f.close()
-                    self.mfa.add_file(cloud_name, new_local_file, remote_file_name, str(path.getsize(new_local_file)))
+                    self.mfa.add_file(cloud_name, new_local_file, remote_file_name, str(path.getsize(path.join(self.watch_dir,new_local_file))))
 
                 diff = set(current_file_map.keys()) - set(latest_file_map.keys())
                 delete_local_files = list(diff)
                 for deleted_local_file in delete_local_files:
-                    os.unlink(deleted_local_file)
+                    os.unlink(path.join(self.watch_dir, deleted_local_file))
                     self.mfa.remove_file(cloud_name, delete_local_files)
                     # no need to request delete to cloud drive because it
                     # already has been deleted by another node
@@ -178,6 +182,7 @@ class RainDrive(object):
         current_xml_content = self.mfa.get_raw_xml()
         s.send(self.packet_builder.xml_upload(current_xml_content))
         s.close()
+        self.mfa.dump()
 
     def recv_timeout(self, sock, timeout=2):
         sock.setblocking(0)

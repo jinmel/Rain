@@ -15,6 +15,7 @@ from socket import *
 import logging
 import time
 import os
+import sys
 
 
 SUPPORTED_CLOUDS = [DropBox.name, GoogleDrive.name, Box.name]
@@ -39,7 +40,11 @@ if __name__ == "__main__":
 
     mfa = RainMetaFileAdapter()
     mfa.set_metafile("./metafile.xml")
-    rdrive = RainDrive(mfa)
+    if len(sys.argv) != 2:
+        print "Usage : %s <watch_directory>" % sys.argv[0]
+        exit()
+    watch_dir = sys.argv[1]
+    rdrive = RainDrive(mfa,watch_dir)
     print mfa.get_all_cloud_name()
     print rdrive.get_cloud_num()
     rdrive.login()
@@ -82,8 +87,8 @@ if __name__ == "__main__":
         sync_t = Thread(target=sync_thread, args=(rdrive,))
         sync_t.start()
         observer = Observer()
-        event_handler = RainFileSystemEventHandler(rdrive)
-        observer.schedule(event_handler, ".", recursive=True)
+        event_handler = RainFileSystemEventHandler(rdrive,watch_dir)
+        observer.schedule(event_handler, watch_dir, recursive=True)
         observer.start()
         try:
             while True:

@@ -1,21 +1,25 @@
 from watchdog.events import FileSystemEventHandler
+from os.path import relpath
 
 
 class RainFileSystemEventHandler(FileSystemEventHandler):
     #TODO: implement this according to metafile.xml
 
-    def __init__(self, rain_drive):
+    def __init__(self, rain_drive,watch_dir):
         self.rain_drive = rain_drive
+        self.watch_dir = watch_dir
 
     def on_created(self, event):
         if not event.is_directory:
-            print 'create file' + event.src_path
-            self.rain_drive.new_file(event.src_path)
+            event_path = relpath(event.src_path,self.watch_dir)
+            print 'create file' + event_path
+            self.rain_drive.new_file(event_path)
 
     def on_deleted(self, event):
         if not event.is_directory:
-            print 'delete file' + event.src_path
-            self.rain_drive.remove_file(event.src_path)
+            event_path = relpath(event.src_path,self.watch_dir)
+            print 'delete file' + event_path
+            self.rain_drive.remove_file(event_path)
 
 
 
