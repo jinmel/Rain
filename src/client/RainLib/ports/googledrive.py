@@ -87,7 +87,7 @@ class GoogleDrive(clouddrive.CloudDrive):
         fid = self.find_file_id(dir_elem)
         dir_rec = dir_rec + dir_elem + "/"
         if fid is None :
-          print dir_rec
+#            print dir_rec
           self.mkdir(dir_rec)
 #        self.mkdir(dir_elem)
 
@@ -97,7 +97,7 @@ class GoogleDrive(clouddrive.CloudDrive):
 #          fid = self.find_file_id(dirr)
 #          if fid is None :
 #            mkdir(dirr)
-          
+
 
 
 
@@ -125,17 +125,17 @@ class GoogleDrive(clouddrive.CloudDrive):
             return -1
         return 1
 
-    def delete(self, filename): 
+    def delete(self, filename):
         dirname_s = filename.split("/")
         fid = self.find_file_id(dirname_s[len(dirname_s) - 1])
         if fid is None:
           return -1
-        
+
         else:
             file_new = self.drive.CreateFile({'id': fid})
             file_new._FilesDelete()
             return 1
-    
+
     def capacity(self):
       return self.drive.capacity()
 
@@ -154,11 +154,11 @@ class GoogleDrive(clouddrive.CloudDrive):
                         else
                             p2 = {'id':'root','kind':'drive#fileLink'}
                         parents_list += [(drive.CreateFile({'id' :find_file_id(dirname_s[i]),'kind':"drive#fileLink",'parents':[p2]}), {'id' :find_file_id(dirname_s[i]),'kind':"dirve#fileLink"})]
-        
+
         return parents_list
     """
 
- 
+
 
     def find_file_id(self, filename):
         fid = self.ListFolder('root', filename)

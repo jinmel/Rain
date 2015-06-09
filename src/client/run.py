@@ -53,9 +53,7 @@ if __name__ == "__main__":
     print "=== Rain - Cloud Unification ==="
     print "1. Add Cloud Drives"
     print "2. Start Rain Daemon"
-    print "3. Debug"
     choice = int(raw_input('select > '))
-    #choice = 3
 
     if choice == 1:
         #TODO: open meta file and check what clouds are registered
@@ -96,6 +94,3 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             observer.stop()
         observer.join()
-    elif choice == 3:
-        gdrive = GoogleDrive(mfa.get_cloud_access_token('Google Drive'))
-        print "Delete success"

@@ -12,17 +12,9 @@ class RainFileSystemEventHandler(FileSystemEventHandler):
     def on_created(self, event):
         if not event.is_directory and not self.rain_drive.is_locked():
             event_path = relpath(event.src_path,self.watch_dir)
-            print 'create file' + event_path
             self.rain_drive.new_file(event_path)
 
     def on_deleted(self, event):
         if not event.is_directory and not self.rain_drive.is_locked():
             event_path = relpath(event.src_path,self.watch_dir)
-            print 'delete file' + event_path
             self.rain_drive.remove_file(event_path)
-
-
-
-
-
-

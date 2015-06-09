@@ -90,9 +90,7 @@ class RainDrive(object):
         self.upload_metafile()
 
     def sync(self):
-        print 'sync invoked'
         if not self.check_hash(): #hash is different->get new xml
-            print 'hash fail'
             self.lock = 1
             while not self.acquire_lock():
                 time.sleep(3)
@@ -137,7 +135,6 @@ class RainDrive(object):
             #finally, update current mfa to latest mfa
             self.upload_metafile()
             self.lock = 0
-        print 'sync_end'
 
     def login(self):
         s = socket(AF_INET, SOCK_STREAM)
@@ -165,25 +162,20 @@ class RainDrive(object):
         s.connect(RAIN_ADDR)
         s.send(self.packet_builder.xml_request())
         data = self.recv_timeout(s)
-        print data
         xml_content = self.packet_builder.UnpackData(data)[2]
         s.close()
         return xml_content
 
     def acquire_lock(self):
-        print "acquiring lock"
         s = socket(AF_INET, SOCK_STREAM)
         s.connect(RAIN_ADDR)
         s.send(self.packet_builder.xml_lock())
         data = self.recv_timeout(s)
-        print repr(data)
         lock = self.packet_builder.UnpackData(data)[2]
-        print lock
         s.close()
         return lock == "YES"
 
     def upload_metafile(self):
-        print "uploading metafile.."
         s = socket(AF_INET, SOCK_STREAM)
         s.connect(RAIN_ADDR)
         current_xml_content = self.mfa.get_raw_xml()
@@ -217,4 +209,3 @@ class RainDrive(object):
                 pass
 
         return ''.join(total_data)
-
